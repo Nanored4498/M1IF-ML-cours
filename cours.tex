@@ -1,0 +1,149 @@
+\documentclass[11pt,oneside]{book}
+
+\usepackage[french]{babel}
+\usepackage[utf8]{inputenc}  
+\usepackage[T1]{fontenc}
+\usepackage{listings}
+\usepackage{comment}
+\usepackage[left=2.5cm,right=2.5cm,top=3cm,bottom=2.65cm]{geometry}
+\usepackage{graphicx}
+\usepackage{tabularx}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{bbm, bm}
+\usepackage{stmaryrd}
+\usepackage{mathtools}
+\usepackage{hyperref}
+\usepackage{tikz}
+\usepackage{tabularx}
+\usepackage{makecell}
+\usepackage{color}
+\usepackage{fancybox}
+\usepackage[thmmarks,amsmath]{ntheorem}
+\usepackage{minitoc}
+\usepackage{titletoc}
+\usepackage{tikz}
+\usepackage{algpseudocode}
+\usepackage{wrapfig}
+
+\graphicspath{{images/}}
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+\usetikzlibrary{arrows.meta}
+\usetikzlibrary{arrows}
+\mathtoolsset{showonlyrefs=true}
+
+\addto\extrasfrench{%
+	\def\subsectionautorefname{\S}%
+	\def\sectionautorefname{\S}%
+}
+
+\definecolor{darkWhite}{rgb}{0.94,0.94,0.94}
+\definecolor{blue}{rgb}{0.12,0.16,0.53}
+\definecolor{green}{rgb}{0.25,0.28,0.06}
+\definecolor{greenTikz}{rgb}{0.16,0.53,0.12}
+\definecolor{red}{rgb}{0.71,0.19,0.11}
+\definecolor{darkPurple}{rgb}{0.2,0.05,0.18}
+\definecolor{whiteGray}{rgb}{0.92,0.96,0.95}
+
+\newcounter{sss}
+\renewcommand\thesection{\textcolor{red}{\Roman{section} -}}
+\renewcommand\thesubsection{\textcolor{blue}{\arabic{subsection}/}}
+\renewcommand\thesss{\textcolor{green}{\alph{sss}.}}
+\renewcommand\thechapter{\Alph{chapter}}
+\newcommand{\sect}[1]{\section{\textcolor{red}{#1}}}
+\newcommand{\subs}[1]{\subsection{\textcolor{blue}{#1}}}
+\newcommand{\subsubs}[1]{
+	\stepcounter{sss}
+	\subsubsection{\textcolor{green}{\thesss~#1}}
+}
+
+\newcommand{\mybox}[4]{
+	\begin{center}
+		\boxput*(0,1){\colorbox{darkWhite}{\textbf{#1}}}{
+			\setlength{\fboxsep}{12pt}
+			\fcolorbox{#2}{#3}{
+				\begin{Bflushleft}
+					\begin{minipage}{0.908\linewidth}
+						\vspace{2mm} \par \textcolor{#2}{#4}
+					\end{minipage}
+				\end{Bflushleft}
+			}
+		}
+	\end{center}
+}
+
+\newcommand{\mytitle}[1]{
+	\title{
+		\fcolorbox{black}{whiteGray}{
+			\begin{Bflushleft}
+				\\ \huge \textbf{\textcolor{red}{#1}}
+			\end{Bflushleft}
+		}
+	}
+}
+
+\setcounter{tocdepth}{1}
+\setcounter{minitocdepth}{3}
+\nomtcrule
+\titlecontents*{chapter}[0pt]{}
+{\bfseries\chaptername\ \thecontentslabel\quad}{}
+{\bfseries\hfill\contentspage}
+\newcommand{\mytoc}{
+	\renewcommand{\contentsname}{}
+	\mybox{Table des matières}{darkPurple}{darkWhite}{
+		\vspace{-40mm}\tableofcontents}
+}
+\newcommand{\myminitoc}{
+	\mybox{Table des matières}{darkPurple}{darkWhite}{
+		\vspace{-9mm}\minitoc \vspace{-8mm}}
+}
+
+
+\newcommand{\DEF}[1]{\vspace{1mm} \mybox{Définition}{blue}{white}{#1}}
+\newcommand{\REM}[1]{\vspace{1mm} \mybox{Remarque}{darkPurple}{white}{#1}}
+
+\newcounter{propNum}
+\newcommand{\PROP}[2][]{
+	\stepcounter{propNum}
+	\vspace{1mm}
+	\mybox{Proposition \thepropNum #1}{red}{white}{#2}
+}
+\newcommand{\dem}{\paragraph{Démonstration}}
+\newcommand{\exe}{\paragraph{\textit{\textcolor{green}{Exemple}}}}
+
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\trans}{\mathsf{T}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Pp}{\mathbb{P}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\X}{\mathcal{X}}
+\newcommand{\Y}{\mathcal{Y}}
+\newcommand{\Z}{\mathcal{Z}}
+\newcommand{\dist}{\mathcal{D_Z}}
+\newcommand{\Hyp}{\mathcal{H}}
+\newcommand{\trisk}{\mathcal{R}^l}
+\newcommand{\erisk}{\hat{\mathcal{R}}^l}
+
+\mytitle{Machine Learning}
+\author{
+	Notes écrites par \\
+	Yoann Coudert--Osmont \\
+	\texttt{yoann.coudert-osmont@ens-lyon.fr}
+	\and
+	D'après un cours de \\
+	Marc Sebban \\
+	University of Jean Monnet Saint-Étienne
+}
+\date\today
+
+\begin{document}
+	
+	\dominitoc[n]
+	\maketitle
+	\mytoc
+	
+	\input{chap1.tex}
+	
+\end{document}
