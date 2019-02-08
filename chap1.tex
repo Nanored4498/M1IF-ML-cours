@@ -20,7 +20,7 @@ Les applications principales du machine learning sont alors la vision par ordina
 		\item On pose $\bm{S = \{ z_i = (x_i, y_i) \}_{i = 1}^m}$ un ensemble de $\bm{m}$ exemples d'entraînement indépendants et identiquement distribués selon une une distribution inconnue $\bm{\dist}$ sur l'espace $\bm{\Z = \X \times \Y}$.
 		\item Les valeurs $x_i \in \bm{\X}$ sont généralement des vecteurs de $\R^d$ dont les composantes sont appelées les \textbf{features}.
 		\item Les valeurs $y_i \in \bm{\Y}$ se trouvent dans l'ensemble discret des \textbf{classes/étiquettes} (typiquement $\Y = \{ -1, +1 \}$ en classification binaire) ou dans un ensemble continue dans le cas de régressions.
-		\item Finalement on cherche une \textbf{fonction cible} $\bm{f}$ tel que $\bm{\forall (x, y) \in \X \times \Y, \, y = f(x)}$.
+		\item Finalement on cherche une \textbf{fonction cible} $\bm{f}$ tel que $\bm{\forall (x, y) \in \dist, \, y = f(x)}$.
 	\end{itemize}
 }
 
@@ -124,14 +124,14 @@ Malheureusement, à cause de la non-convexité et de la non-différentiabilité 
 
 \subs{Minimisation de risque régularisée}
 
-Trop entraîner l'algorithme sur les données d'entraînement $S$ peut conduire à une mémorisation et à l'overfitting. Le modèle devient compliqué et on risque d'avoir une mauvaise généralisation. \\
-Le principe du \textbf{rasoir d'Occam} est "le plus simple est le mieux". Pour appliquer ce principe, on essaye de minimiser les paramètres du modèle. \\
+Trop entraîner l'algorithme sur les données d'entraînement $S$ peut conduire à une mémorisation et à l'overfitting. Le modèle devient compliqué et on risque d'avoir une mauvaise généralisation. Le principe du \textbf{rasoir d'Occam} est "le plus simple est le mieux". Pour appliquer ce principe, on essaye de minimiser les paramètres du modèle. \\
 On va donc minimiser le \textbf{risque empirique régularisé} :
 $$ \min_{h \in \Hyp} \erisk(h) + \lambda \| h \| $$
 On pénalise alors les hypothèses avec une forte norme.
 
 \DEF{
 	La norme $l_p$ d'un vecteur $\theta$ d'un espace à $d$ dimensions est défini comme suit :
+	\vspace*{-3mm}
 	$$ \| \theta \|_p = \left( \sum_{i = 1}^d |\theta_i|^p \right)^{\frac{1}{p}} $$
 	\vspace{-5mm}
 }
@@ -178,14 +178,14 @@ On pénalise alors les hypothèses avec une forte norme.
 	\end{tikzpicture}
 \end{center}
 
-La norme $l_2$ est utilisée pour réduire les risques d'overfitting en réduisant les plus grandes valeurs du modèle. La norme $l_1$, elle permet d'obtenir des modèles sparses, c'est à dire avec peu de features.
+La norme $l_2$ est utilisée pour réduire les risques d'overfitting en réduisant les plus grandes valeurs du modèle. La norme $l_1$, elle permet d'obtenir des modèles creux, c'est à dire avec peu de features.
 
 \exe
-Considérons le problème suivant :
+Considérons le problème suivant : \vspace{-1mm}
 $$ \min_{\theta \in \R^d} \frac{1}{2} \theta^\trans \theta - \theta^\trans x + \lambda \| \theta \|_2^2 $$
-Si $\lambda = 0$, alors :
+Si $\lambda = 0$, alors : \vspace{-1mm}
 $$ \dfrac{\partial \frac{1}{2} \theta^\trans \theta - \theta^\trans x}{\partial \theta_j} = 0 \Rightarrow \theta_j - x_j = 0 \Rightarrow \fbox{$\theta_j = x_j$} $$
-Si $\lambda \neq 0$, alors :
+Si $\lambda \neq 0$, alors : \vspace{-2mm}
 $$ \dfrac{\partial \frac{1}{2} \theta^\trans \theta - \theta^\trans x  + \lambda \| \theta \|_2^2}{\partial \theta_j} = 0 \Rightarrow \theta_j - x_j +2\lambda \theta_j = 0 \Rightarrow \fbox{$\theta_j = \dfrac{x_j}{1 + 2\lambda}$} $$
 \begin{center}
 	\begin{tikzpicture}[>={latex}, thick]
@@ -210,7 +210,7 @@ $$ \dfrac{\partial \frac{1}{2} \theta^\trans \theta - \theta^\trans x  + \lambda
 \end{center}
 
 \exe
-Maintenant on peut prendre la norme $l_1$ pour constater qu'elle engendre bien de la sparsité.
+Maintenant on peut prendre la norme $l_1$ pour constater qu'elle engendre bien un vecteur de paramètres creux.
 $$ \min_{\theta \in \R^d} \frac{1}{2} \theta^\trans \theta - \theta^\trans x + \lambda \| \theta \|_1 $$
 Si $\lambda = 0$, on a vu que $\theta^* = x$. \\
 En revanche si $\lambda > 0$, on considère la dérivée partielle à $\theta_j = 0^+$, et à $\theta_j = 0^-$ :
@@ -235,7 +235,7 @@ Donc si $|x_j| \leqslant \lambda$ alors $\theta_j^* = 0$.
 	\draw[fill] (11, 2) circle (0.05) node[below] {$x$};
 	\draw[fill, red] (9, 0) circle (0.05) node[above] {$\theta^*$};
 	\node[color=red] at (12.4, 3) {$\lambda = 2$};
-	\node[color=red] at (12.4, 2.5) {$\theta^*$ est sparse};
+	\node[color=red] at (12.4, 2.5) {$\theta^*$ est creux};
 	\draw[very thick, fill=greenTikz, fill opacity=0.5] (11.24, 0) arc (0:116.6:2.24);
 	\draw[very thick, fill=greenTikz, fill opacity=0.5] (8, 2) arc (158:180:5.39);
 	\draw[very thick, fill=greenTikz, fill opacity=0.5] (7.61, 0) arc (217:222.4:6.71);
@@ -259,17 +259,17 @@ On considère $\{ \mathcal{G}_{k = 1}^K \}$ une partition de $\{ 1, \dots, d \}$
 $$ \| \theta \|_{group} = \sum_{g \in \mathcal{G}} \left( \sum_{j \in g} \theta_j^2 \right)^{\frac{1}{2}} $$
 $$ \| \theta \|_{coop} = \sum_{g \in \mathcal{G}} \left[ \left( \sum_{j \in g} [\theta_j]_+^2 \right)^{\frac{1}{2}} + \left( \sum_{j \in g} [\theta_j]_-^2 \right)^{\frac{1}{2}} \right] $$
 
-
+\newpage
 \subs{Contrepartie Biais/Variance}
 
 D'où vient l'erreur de $h \in \Hyp$ ?
 \begin{itemize}
-	\item Du \textbf{biais inductif}. Rien ne garantie l'égalité entre l'espace cible des concepts $\mathcal{F}$ et la classe d'hypothèse que l'on a choisi $\Hyp$.
+	\item Du \textbf{biais inductif}. Rien ne garanti l'égalité entre l'espace cible des concepts $\mathcal{F}$ et la classe d'hypothèse que l'on a choisi $\Hyp$.
 	\item De la \textbf{variance}. Comme l'ensemble d'entraînement est fini et choisi aléatoirement selon $\dist$, l'algorithme d'apprentissage ne retourne pas l'hypothèse optimale $h^*$ de $\Hyp$.
 \end{itemize}
 
 \begin{center}
-	\begin{tikzpicture}[thick]
+	\begin{tikzpicture}[thick, scale=1.3]
 		\draw (0, 0.5) -- (4, 0.5) -- (4, 2) -- node[above] {$\Hyp$} (0, 2) -- (0, 0.5);
 		\node at (5.5, 0.5) {$\mathcal{F}$};
 		\draw[fill] (0.5, 1) circle (0.05) node[above] {$h$}
@@ -294,6 +294,7 @@ $$ \trisk(h) \leqslant {\color{red}\text{Erreur de Bayes}} + {\color{blue}\text{
 	\includegraphics[scale=0.4]{one_seven.png}
 \end{center}
 
+\newpage
 \paragraph{Variance}
 $h$ va converger vers $h^*$ si on augmente le nombre d'exemples $m$.
 \begin{center}
@@ -518,6 +519,118 @@ Au lieu d'utiliser la dimension VC, on peut aussi utiliser la complexité de Rad
 \PROP[ (Borne de convergence uniforme avec la complexité de Rademacher)] {
 	Avec probabilité $1 - \delta$, on a pour tout $h$ dans $\Hyp$ : \vspace{-3mm}
 	$$ \trisk(h) \leqslant \erisk(h) + 2 Rad_m(\Hyp, S) + \sqrt{\dfrac{4}{m} ln \left( \dfrac{2}{\delta} \right)} $$
+	\vspace{-5mm}
+}
+
+\subsubs{Stabilité uniforme}
+
+On veut réduire la variance sans modifier le biais. On va voir qu'avoir une faible variance est équivalent à avoir une grande stabilité. Intuitivement un algorithme est stable si pour de petits changements dans l'ensemble d'entraînement, la sortie $h$ de l'algorithme varie peu.
+
+Dans la définition qui suit, on utilise les notations suivantes :
+\begin{itemize}
+	\item $S^{\setminus i} = \{ z_1, \dots, z_{i-1}, z_{i+1}, \dots, z_m \}$ pour l'ensemble $S$ sans le $i$-ème exemple.
+	\item $S^{i} = \{ z_1, \dots, z_{i-1}, z_i^\prime, z_{i+1}, \dots, z_m \}$ pour l'ensemble $S$ dont le $i$-ème exemple est remplacé par une valeur aléatoire suivant la loi $\dist$.
+\end{itemize}
+
+\DEF{
+	Un algorithme $L$ a une \textbf{stabilité uniforme} $\dfrac{\beta}{m}$ respectivement à une fonction de perte $l$ si :
+	$$ \forall S, \, \forall i \in \{1, ..., m\} \, \sup_z \left| l(h_S, z) - l(h_{S^{\setminus i}}, z) \right| \leqslant \dfrac{\beta}{m} $$
+	\vspace{-5mm}
+}
+
+Par inégalité triangulaire on obtient :
+$$ \forall S, \, \forall i \in \{1, ..., m\} \, \sup_z \left| l(h_S, z) - l(h_{S^{i}}, z) \right| \leqslant 2 \dfrac{\beta}{m} $$
+
+
+\PROP[ (Borne de généralisation utilisant la stabilité uniformes)] {
+	Soit $S$ un ensemble d'entraînement de taille $m$. Alors pour tout algorithme $L$ de stabilité uniforme $\dfrac{\beta}{m}$ respectivement à une fonction de perte $l$ bornée par $M$, on a avec probabilité $1 - \delta$ : \vspace{-3mm}
+	$$ \trisk(h_S) \leqslant \erisk(h_S) + 2 \dfrac{\beta}{m} + (4 \beta + M) \sqrt{\dfrac{\ln \frac{1}{\delta}}{2m}} $$
+	\vspace{-5mm}
+}
+
+Pour la démonstration, on a besoin du théorème suivant :
+
+\PROP[ (McDiarmid)]{
+	Soit $F : \Z^m \rightarrow \R$ une fonction pour laquelle il existe des constantes $c_1, ..., c_m$ tel que \vspace{-2mm}
+	$$ \sup_{S \in \Z^m, z_i^\prime \in \Z} \left| F(S) - F(S^i) \right| \leqslant c_i $$
+	\vspace{-2mm} Alors \vspace{-2mm}
+	$$ \Pp(F(S) - \E_S[F(S)] \geqslant \gamma) \leqslant \exp \left( \dfrac{- 2 \gamma^2}{\sum_{i = 1}^m c_i^2} \right) $$
+	\vspace{-5mm}
+}
+
+\dem
+Comme l'espérance est inférieure au $\sup$ d'une variable aléatoire, on a :
+$$ \begin{array}{llc}
+	| \trisk(h_S) - \trisk(h_{S^{\setminus i}}) | & = & \left| \E_z[l(h_S, z)] - \E_z[l(h_{S^{\setminus i}}, z)] \right| \\
+	 & \leqslant & \dfrac{\beta}{m}
+\end{array} $$
+On utilise alors l'inégalité triangulaire pour déduire :
+$$ \begin{array}{llc}
+| \trisk(h_S) - \trisk(h_{S^{i}}) | & = & | \trisk(h_S) - \trisk(h_{S^{\setminus i}}) | + | \trisk(h_{S^i}) - \trisk(h_{S^{\setminus i}}) | \\
+& \leqslant & 2 \dfrac{\beta}{m}
+\end{array} $$
+On passe ensuite au risque empirique :
+$$ \begin{array}{lll}
+	| \erisk(h_S) - \erisk(h_{S^{\setminus i}}) |
+	 & = & \left| \displaystyle \dfrac{1}{m} \sum_{j \neq i} \left( l(h_S, z_j) - l(h_{S^{\setminus i}}, z_j) \right) + \dfrac{1}{m} l(h_S, z_i) \right| \\
+	 & \leqslant & \displaystyle \dfrac{1}{m} \sum_{j \neq i} \left| l(h_S, z_j) - l(h_{S^{\setminus i}}, z_j) \right| + \dfrac{1}{m} | l(h_S, z_i) | \\
+	 & \leqslant & \dfrac{\beta}{m} + \frac{M}{m}
+\end{array}$$
+Toujours avec l'inégalité triangulaire, on obtient ensuite :
+$$ | \erisk(h_S) - \erisk(h_{S^{i}}) | \leqslant 2 \dfrac{\beta}{M} + 2 \dfrac{M}{m} $$
+Cependant on peut faire un peu mieux :
+$$ \begin{array}{lll}
+	| \erisk(h_S) - \erisk(h_{S^{i}}) |
+	& \leqslant & \displaystyle \dfrac{1}{m} \sum_{j \neq i} \left| l(h_S, z_j) - l(h_{S^{ i}}, z_j) \right| + \dfrac{1}{m} | l(h_S, z_i) - l(h_S, z_i^\prime) | \\
+	& \leqslant & 2 \dfrac{\beta}{m} + \frac{M}{m}
+\end{array}$$
+On considère alors la fonction $F = \trisk - \erisk$ pour utiliser le théorème de McDiarmid :
+$$ \begin{array}{lll}
+	| F(S) - F(S^i) |
+	& = & | (\trisk(h_S) - \erisk(h_S)) - (\trisk(h_{S^i}) - \erisk(h_{S^i}) | \\
+	& \leqslant & | \trisk(h_S) - \trisk(h_{S^i}) | + | \erisk(h_S) - \erisk(h_{S^i}) | \\
+	& \leqslant & 4 \dfrac{\beta}{m} + \dfrac{M}{m} = c_i
+\end{array} $$
+D'après le théorème de McDiarmid on a donc :
+$$ \Pp(F(S) - \E_S[F(S)] \geqslant \gamma) \leqslant \exp \left( \dfrac{- 2 \gamma^2}{\sum_{i = 1}^m c_i^2} \right) $$
+Il nous faut désormais calculer l'espérance de $F(S)$.
+$$ \begin{array}{lll}
+	\E_S[\trisk(h_S) - \erisk(h_S)]
+	& = & \E_S[\trisk(h_S)] - \E_S[\erisk(h_S)] \\
+	& = &\displaystyle \E_{S, z \sim \dist}[l(h_S, z)] - \dfrac{1}{m} \sum_{j = 1}^m \E_S[l(h_S, z_j)] \\
+	& = & \displaystyle \E_{S, z \sim \dist}[l(h_S, z)] - \dfrac{1}{m} \sum_{j = 1}^m \E_{S, z_j^\prime \sim \dist}[l(h_{S^j}, z_j^\prime)] \\
+	& = & \E_{S, z_j^\prime \sim \dist}[l(h_S, z_j^\prime)-l(h_{S^j}, z_j^\prime)] \\ \vspace{1mm}
+	& \leqslant & \displaystyle \E_{S, z_j^\prime \sim \dist} \left[ | l(h_S, z_j^\prime)-l(h_{S^j}, z_j^\prime) | \right] \\
+	& \leqslant & \displaystyle \E_{S, z_j^\prime \sim \dist} \left[ | l(h_S, z_j^\prime)-l(h_{S^{\setminus j}}, z_j^\prime) | \right] + \E_{S, z_j^\prime \sim \dist} \left[ | l(h_{S^{\setminus j}}, z_j^\prime)-l(h_{S^j}, z_j^\prime) | \right] \\
+	& \leqslant & 2 \dfrac{\beta}{m}
+\end{array} $$
+Cela nous donne finalement :
+$$ \Pp \left( \trisk - \erisk \geqslant \gamma + 2 \dfrac{\beta}{m} \right) \leqslant \exp \left( \dfrac{- 2 m \gamma^2}{(4 \beta + M)^2} \right) $$
+Et en prenant $\gamma$ tel que la partie de droite soit $1 - \delta$ on obtient bien :
+$$ \trisk(h_S) \leqslant \erisk(h_S) + 2 \dfrac{\beta}{m} + (4 \beta + M) \sqrt{\dfrac{\ln \frac{1}{\delta}}{2m}} $$
+\findem
+
+Maintenant il nous faut savoir comment trouver $\beta$.
+
+\PROP[ (Stabilité avec régularisation)]{
+	Si notre apprentissage est de la forme :
+	$$ \min_{h \in \Hyp} \dfrac{1}{m} \sum_i l(h, z_i) + \lambda \| h \|^2 $$
+	Alors si $l$ est $\sigma$-admissible, c'est à dire que $x \mapsto l(h(x), y)$ est $\sigma$-lipschitzienne pour tout $h$ et tout $y$, on a :
+	$$ \beta \leqslant \dfrac{\sigma^2}{2 \lambda} $$
+	\vspace{-5mm}
+}
+
+\subsubs{Robustesse algorithmique}
+
+\DEF{
+	Un algorithme $L$ est $\bm{(K, \epsilon(.))}$\textbf{-robuste} pour $K \in \N$ et $\epsilon : \mathcal{P}(\Z) \rightarrow \R$ si pour tout $S \in \mathcal{P}(\Z)$, $\Z$ peut être partitionné en $K$ sous-ensembles $\{ C_i \}_{i = 1}^K$ tel que :
+	$$ \forall i \in [K], \, \forall z, z' \in C_i, \, z \in S \Rightarrow |l(h_S, z) - l(h_S, z')| \leqslant \epsilon(S) $$
+	\vspace{-5mm}
+}
+
+\PROP[ (borne de robustesse)]{
+	Si un algorithme est $(K, \epsilon(.))$-robuste, alors avec probabilité $1 - \delta$ :
+	$$ \trisk(h_S) \leqslant \erisk(h_S) + \epsilon(S) + \sqrt{\dfrac{2K \ln 2 + 2 \ln(1/\delta)}{m}} $$
 	\vspace{-5mm}
 }
 
