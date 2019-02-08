@@ -635,3 +635,127 @@ Maintenant il nous faut savoir comment trouver $\beta$.
 }
 
 \subs{Choix du modèle}
+
+\renewcommand{\trisk}{\mathcal{R}}
+\renewcommand{\erisk}{\hat{\mathcal{R}}}
+
+Les bornes de généralisation PAC ne sont pas vraiment utilisables car elles sont vraiment pessimistes. Une idée peut être la validation croisée qui permet de mesurer la généralisation d'un modèle après entraînement.
+
+\begin{center}
+	\begin{algorithm}[H]
+		\KwIn{Un algorithme d'apprentissage $L$ et un ensemble d'apprentissage $S$}
+		\KwOut{une estimation $\erisk_2(h)$ de $\trisk(h)$}
+		\vspace{3mm}
+		Séparer $S$ en $k$ sous-ensembles $S_1, \dots, S_k$\;
+		\For{$i=1$ à $k$}{
+			Exécuter $L$ sur $S \setminus S_i$ pour obtenir un classifieur $h_i$;
+		}
+		Déduire l'estimation du risque $\erisk_2(h) = \dfrac{1}{k} \sum_{i = 1}^k \erisk_2(h_i)$ où $\erisk_2(h_i)$ est l'erreur de $h_i$ sur $S_i$\;
+		\vspace{3mm}
+		\caption{Algorithme de $k$-validation croisée}
+	\end{algorithm}
+\end{center}
+
+Avec cet algorithme on peut alors comparer différent algorithmes d'apprentissage.
+
+\exe
+\begin{center}
+	\begin{tikzpicture}[thick, scale=0.6]
+		\draw[domain=0:10, smooth, variable=\x, blue, dashed]
+			plot ({\x}, {-0.55 + 1.3 * \x * (1 - 0.1 * \x)});
+		\draw[domain=0:10, smooth, variable=\x, red]
+			plot ({\x}, {0.895863 + 0.14997759 * \x)});
+		\draw[circle, fill] (0.1, -0.6349920559756366) circle(0.15);
+		\draw[circle, fill] (1.0, 0.30147401369268423) circle(0.15);
+		\draw[circle, fill] (1.5, 1.3173171840454918) circle(0.15);
+		\draw[circle, fill] (2.3, 2.2037856155666598) circle(0.15);
+		\draw[circle, fill] (4.8, 2.53199171235714) circle(0.15);
+		\draw[circle, fill] (5.1, 3.0593432681003296) circle(0.15);
+		\draw[circle, fill] (6.6, 2.7147727490453817) circle(0.15);
+		\draw[circle, fill] (7.4, 2.377546686262505) circle(0.15);
+		\draw[circle, fill] (8.2, 1.5487114646843132) circle(0.15);
+		\draw[circle, fill] (9.2, 0.46764396433128286) circle(0.15);
+		\node at (5, -1) {underfitting};
+		
+		\draw[domain=0:10, smooth, variable=\x, blue, dashed]
+			plot ({\x+14}, {-0.55 + 1.3 * \x * (1 - 0.1 * \x)});
+		\draw[domain=0:2, smooth, variable=\x, red]
+			plot ({\x+14}, {-1.41950554e+00 + \x * (1.00967400e+01 + \x * (-2.53146666e+01 +
+				\x * (2.96771161e+01 + \x * (-1.74688908e+01 + \x * (5.69941439e+00 +
+				\x * (-1.08044823e+00 + \x * (1.18525383e-01 + \x * (-6.98156850e-03 +
+				\x * 0.000170922685)))))))});
+		\draw[domain=-1:2, smooth, variable=\x, red]
+			plot ({\x+17}, {1.42484270e+00 + \x * (-1.40170537e+00 + \x * (3.40897007e-01 +
+			\x * (1.03657493e+00 + \x * (-1.83881811e-01 + \x * (-1.59051020e-01 +
+			\x * (3.68822015e-02 + \x * (6.34668910e-03 + \x * (-2.36665600e-03 +
+			\x * 1.70922685e-04)))))))});
+		\draw[domain=-1:2, smooth, variable=\x, red]
+		plot ({\x+20}, {3.33547340e+00 + \x * (-7.96494283e-01 + \x * (-8.55389836e-01 +
+			\x * (6.85820570e-01 + \x * (2.21442569e-01 + \x * (-1.29594094e-01 +
+			\x * (-3.85819884e-02 + \x * (4.92589522e-03 + \x * (2.24825651e-03 +
+			\x * 1.70922685e-04)))))))});
+		\draw[domain=-1:0.36, smooth, variable=\x, red]
+			plot ({\x+23}, {-1.02813387e+00 + \x * (2.33112518e+00 + \x * (1.98927127e+01 +
+				\x * (2.58711983e+01 + \x * (1.57048589e+01 + \x * (5.25072508e+00 +
+				\x * (1.01907510e+00 + \x * (1.14263001e-01 + \x * (6.86316901e-03 +
+				\x * 1.70922685e-04)))))))});
+		\draw[circle, fill] (14.1, -0.6349920559756366) circle(0.15);
+		\draw[circle, fill] (15.0, 0.30147401369268423) circle(0.15);
+		\draw[circle, fill] (15.5, 1.3173171840454918) circle(0.15);
+		\draw[circle, fill] (16.3, 2.2037856155666598) circle(0.15);
+		\draw[circle, fill] (18.8, 2.53199171235714) circle(0.15);
+		\draw[circle, fill] (19.1, 3.0593432681003296) circle(0.15);
+		\draw[circle, fill] (20.6, 2.7147727490453817) circle(0.15);
+		\draw[circle, fill] (21.4, 2.377546686262505) circle(0.15);
+		\draw[circle, fill] (22.2, 1.5487114646843132) circle(0.15);
+		\draw[circle, fill] (23.2, 0.46764396433128286) circle(0.15);
+		\node at (19, -1) {overfitting};
+		
+		\draw[domain=0:10, smooth, variable=\x, blue, dashed]
+			plot ({\x+7}, {-6.55 + 1.3 * \x * (1 - 0.1 * \x)});
+		\draw[domain=0:10, smooth, variable=\x, red]
+			plot ({\x+7}, {-6.76178277 + \x * (1.48142299 - 0.14599194 * \x)});
+		\draw[circle, fill] (7.1, -6.634992055975637) circle(0.15);
+		\draw[circle, fill] (8.0, -5.698525986307316) circle(0.15);
+		\draw[circle, fill] (8.5, -4.682682815954508) circle(0.15);
+		\draw[circle, fill] (9.3, -3.7962143844333402) circle(0.15);
+		\draw[circle, fill] (11.8, -3.46800828764286) circle(0.15);
+		\draw[circle, fill] (12.1, -2.9406567318996704) circle(0.15);
+		\draw[circle, fill] (13.6, -3.2852272509546183) circle(0.15);
+		\draw[circle, fill] (14.4, -3.622453313737495) circle(0.15);
+		\draw[circle, fill] (15.2, -4.451288535315687) circle(0.15);
+		\draw[circle, fill] (16.2, -5.532356035668717) circle(0.15);
+		\node at (12, -7) {Bonne généralisation};		
+	\end{tikzpicture}
+\end{center}
+
+On cherche un modèle sous forme de polynôme.
+$$ h_{\theta^{(1)}}(x) = \theta^{(1)}_0 + \theta^{(1)}_1 x $$
+$$ h_{\theta^{(2)}}(x) = \theta^{(2)}_0 + \theta^{(2)}_1 x + \theta^{(2)}_2 x^2 $$
+$$ \dots $$
+$$ h_{\theta^{(10)}}(x) = \theta^{(10)}_0 + \theta^{(10)}_1 x + \dots + \theta^{(10)}_{10} x^{10} $$
+On souhaite savoir quel degré $d^* \in \{ 1, ..., 10 \}$ on doit choisir. Ici $\theta$ est l'ensemble de paramètres à apprendre et $d^*$ peut être vu comme un paramètre extra à régler. \\
+
+On peut alors séparer notre ensemble d'entraînement en deux sous-ensembles $S = Train \cup Test$. Le degré optimal ensuite être obtenu en apprenant les paramètres $\theta^{1}, \dots, \theta^{(10)}$ grâce au sous-ensemble $Train$ puis en sélectionnant le modèle avec la plus petite erreur sur le sous-ensemble $Test$.
+
+\paragraph{Cependant !} On ne peut pas réutiliser l'ensemble $Test$ pour estimer le vrai risque. En effet cela ne serait pas équitable car on a choisi le paramètre $d^*$ de sorte à minimiser l'erreur sur $Test$. L'erreur de généralisation obtenue sur cette ensemble est donc bien trop optimiste.	On doit donc finalement séparé notre ensemble d'entraînement en trois sous-ensembles :
+\begin{itemize}
+	\item \textbf{L'ensemble d'entraînement} pour apprendre les paramètres $\theta^{1}, \dots, \theta^{(10)}$.
+	\item \textbf{L'ensemble de validation} pour choisir le meilleur paramètre $d^*$.
+	\item \textbf{L'ensemble de teste} pour estimer l'erreur de généralisation de $h_{\theta^{(d^*)}}$.
+\end{itemize}
+Si $\erisk(h)$ est l'erreur obtenue sur l'ensemble d'entraînement alors on peut voir $\erisk(h)$ comme le biais de $h$. De même si $\vrisk(h)$ est l'erreur obtenue sur l'ensemble de validation alors on peut voir $V = \vrisk(h) - \erisk(h)$ comme la variance de $h$.
+
+\exe
+On obtient les résultats suivants :
+\begin{itemize}
+	\item Erreur d'entraînement : $1\%$
+	\item Erreur de validation : $11\%$
+\end{itemize}
+Cela veut dire que la variance est bien plus élevée que le biais. On peut donc corriger cela en entraînant l'algorithme sur une plus grand ensemble d'entraînement. \\
+En revanche si on obtient les résultats suivants :
+\begin{itemize}
+	\item Erreur d'entraînement : $15\%$
+	\item Erreur de validation : $16\%$
+\end{itemize}
+Cela veut dire que c'est le biais qui est élevé par rapport à la variance. Il faut donc augmenter l'expressivité de notre modèle.
