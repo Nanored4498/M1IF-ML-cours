@@ -34,6 +34,7 @@
 
 \usetikzlibrary{arrows.meta}
 \usetikzlibrary{arrows}
+\usetikzlibrary{decorations.pathreplacing}
 \mathtoolsset{showonlyrefs=true}
 
 \addto\extrasfrench{%
@@ -49,7 +50,7 @@
 \definecolor{darkPurple}{rgb}{0.2,0.05,0.18}
 \definecolor{whiteGray}{rgb}{0.92,0.96,0.95}
 
-\newcounter{sss}
+\newcounter{sss}[subsection]
 \renewcommand\thesection{\textcolor{red}{\Roman{section} -}}
 \renewcommand\thesubsection{\textcolor{blue}{\arabic{subsection}/}}
 \renewcommand\thesss{\textcolor{green}{\alph{sss}.}}

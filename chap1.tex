@@ -650,7 +650,7 @@ Les bornes de généralisation PAC ne sont pas vraiment utilisables car elles so
 		\For{$i=1$ à $k$}{
 			Exécuter $L$ sur $S \setminus S_i$ pour obtenir un classifieur $h_i$;
 		}
-		Déduire l'estimation du risque $\erisk_2(h) = \dfrac{1}{k} \sum_{i = 1}^k \erisk_2(h_i)$ où $\erisk_2(h_i)$ est l'erreur de $h_i$ sur $S_i$\;
+		Déduire l'estimation du risque $\erisk_2(h) = \frac{1}{k} \sum_{i = 1}^k \erisk_2(h_i)$ où $\erisk_2(h_i)$ est l'erreur de $h_i$ sur $S_i$\;
 		\vspace{3mm}
 		\caption{Algorithme de $k$-validation croisée}
 	\end{algorithm}
@@ -740,7 +740,7 @@ On peut alors séparer notre ensemble d'entraînement en deux sous-ensembles $S 
 
 \paragraph{Cependant !} On ne peut pas réutiliser l'ensemble $Test$ pour estimer le vrai risque. En effet cela ne serait pas équitable car on a choisi le paramètre $d^*$ de sorte à minimiser l'erreur sur $Test$. L'erreur de généralisation obtenue sur cette ensemble est donc bien trop optimiste.	On doit donc finalement séparé notre ensemble d'entraînement en trois sous-ensembles :
 \begin{itemize}
-	\item \textbf{L'ensemble d'entraînement} pour apprendre les paramètres $\theta^{1}, \dots, \theta^{(10)}$.
+	\item \textbf{L'ensemble d'entraînement} pour apprendre les paramètres $\theta^{(1)}, \dots, \theta^{(10)}$.
 	\item \textbf{L'ensemble de validation} pour choisir le meilleur paramètre $d^*$.
 	\item \textbf{L'ensemble de teste} pour estimer l'erreur de généralisation de $h_{\theta^{(d^*)}}$.
 \end{itemize}
