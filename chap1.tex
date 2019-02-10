@@ -206,6 +206,9 @@ $$ \dfrac{\partial \frac{1}{2} \theta^\trans \theta - \theta^\trans x  + \lambda
 	\draw[fill=greenTikz, fill opacity=0.5, very thick] (9, 0.67) circle (0.47^0.5);
 	\draw[very thick] (9, 0.67) circle (0.33^0.5) circle (0.2^0.5) circle (0.07^0.5);
 	\node[color=red] at (9, -0.6) {$\lambda = 1$};
+	\draw[red, very thick, dashed] (3, 2) -- (0, 0);
+	\draw[red, very thick, dashed] (11, 2) -- (8, 0);
+	\draw[red] (9, 0.67) circle (0.08);
 	\end{tikzpicture}
 \end{center}
 
@@ -219,34 +222,33 @@ Or $\theta_j^* = 0$ si et seulement si $g_+^j \geqslant 0$ et $g_-^j \leqslant 0
 Donc si $|x_j| \leqslant \lambda$ alors $\theta_j^* = 0$.
 \begin{center}
 	\begin{tikzpicture}[>={latex}, thick, scale=0.8]
+	\draw[fill=greenTikz, fill opacity=0.5, very thick] (3, 2) circle (5^0.5);
 	\draw[->] (-1, 0) -- (5, 0);
 	\draw[->] (0, -1) -- (0, 3.5);
 	\draw (3, 0) node {\tiny |} node[below] {3};
 	\draw (0, 2) node {\tiny -} node[left] {2};
 	\node[color=red] at (1, -0.6) {$\lambda = 0$};
 	\draw[fill] (3, 2) circle (0.05) node[below] {$x$};
-	\draw[fill=greenTikz, fill opacity=0.5, very thick] (3, 2) circle (5^0.5);
 	\draw[very thick] (3, 2) circle (3^0.5) circle (1);
 	
+	\draw[very thick, fill=greenTikz, fill opacity=0.5]
+		(11.24, 0) arc (0:116.6:2.24) arc (158:180:5.39) arc (217:222.4:6.71) arc (257.8:299.9:4.58);
 	\draw[->] (7, 0) -- (13, 0);
 	\draw[->] (8, -1) -- (8, 3.5);
 	\draw (11, 0) node {\tiny |} node[below] {3};
 	\draw (8, 2) node {\tiny -} node[left] {2};
 	\draw[fill] (11, 2) circle (0.05) node[below] {$x$};
-	\draw[fill, red] (9, 0) circle (0.05) node[above] {$\theta^*$};
 	\node[color=red] at (12.4, 3) {$\lambda = 2$};
 	\node[color=red] at (12.4, 2.5) {$\theta^*$ est creux};
-	\draw[very thick, fill=greenTikz, fill opacity=0.5] (11.24, 0) arc (0:116.6:2.24);
-	\draw[very thick, fill=greenTikz, fill opacity=0.5] (8, 2) arc (158:180:5.39);
-	\draw[very thick, fill=greenTikz, fill opacity=0.5] (7.61, 0) arc (217:222.4:6.71);
-	\draw[very thick, fill=greenTikz, fill opacity=0.5] (8, -0.47) arc (257.4:299.1:4.58);
 	\draw[very thick] (10, 0) arc(0:180:1);
 	\draw[very thick] (8, 0) arc(-104:-76:4.12);
 	\draw[very thick] (10.73, 0) arc(0:125:3^0.5);
 	\draw[very thick] (7.8, 0) arc(180:164:27^0.5);
 	\draw[very thick] (7.8, 0) arc(217.6:220.5:43^0.5);
 	\draw[very thick] (10.73, 0) arc(-66.6:-103:19^0.5);
-	\fill[greenTikz, opacity=0.5] (11.24, 0) -- (8, 2) -- (7.61, 0) -- (8, -0.47);
+	\draw[fill, red] (9, 0) circle (0.08) node[above] {$\theta^*$};
+	\draw[red, very thick, dashed] (3, 2) -- (1, 0) -- (0, 0);
+	\draw[red, very thick, dashed] (11, 2) -- (9, 0) -- (8, 0);
 	\end{tikzpicture}
 \end{center}
 

@@ -164,10 +164,15 @@ $$ \begin{array}{lll}
 \nabla_\theta \dfrac{1}{2} (X\theta - y)^\trans (X\theta - y)
 & = & \dfrac{1}{2} \nabla_\theta \left( \theta^\trans X^\trans X \theta - \theta^\trans X^\trans y - y^\trans X \theta + y^\trans y \right) \\ \\
 & = & \dfrac{1}{2} \left[ \nabla_\theta \left(\theta^\trans X^\trans X \theta \right) - 2 \nabla_\theta \left( y^\trans X \theta \right) \right] \\ \\
-& = & X^\trans X \theta - X^\trans y \\ \\
+& = & X^\trans X \theta - X^\trans y
 \end{array} $$
 
-Ainsi, si $X^\trans X$ est inversible, \fbox{\boldmath $\theta = (X^\trans X)^{-1} X^\trans y$} convient. En revanche si $X^\trans X$ n'est pas inversible, il est possible que des features soient redondants. Appliqué l'algorithme PCA peut alors être une solution.
+\PROP[ (Solution de forme fermée)]{
+	Ainsi, si $X^\trans X$ est inversible, l'expression de $\theta$ suivante est optimale :
+	\vspace{-1mm}
+	$$\theta = (X^\trans X)^{-1} X^\trans y$$
+	En revanche si $X^\trans X$ n'est pas inversible, il est possible que des features soient redondants. Appliqué l'algorithme PCA peut alors être une solution.
+}
 
 \subs{Régression polynomiale}
 
@@ -177,7 +182,80 @@ Dans le cas d'une régression polynomiale, on $h_\theta(x) = \theta_0 + \theta_1
 
 On peut se poser la question : Pourquoi les moindres carrées ? Pourquoi ne pas minimiser la valeur absolue ou encore la puissance 4 ?
 
+Supposons que l'erreur sur $y^{(i)}$ suit une loi gaussienne. Ceci est justifié par le théorème centrale limite. On a donc :
+$$ y^{(i)} = \theta^\trans x^{(i)} + \epsilon^{(i)} $$
+Où $\epsilon^{(i)} \sim \mathcal{N}(0, \sigma)$. \\
+On va ensuite chercher à maximiser la vraisemblance de $y$.
+
+\DEF{
+	Soit $X_1, ..., X_m$ des variables aléatoires i.i.d de densité $f(x|\theta)$ où $\theta$ est un paramètre de la loi. Pour un échantillon $X_1 = x_1, ..., X_n = x_n$ donné, la \textbf{vraisemblance} est : \vspace{-3mm}
+	$$ L(\theta) = f(x_1, ..., x_n) = \prod_{i=1}^m f(x_i|\theta) $$
+	\vspace{-7mm}
+}
+
+On a donc dans notre cas :
+$$ L(\theta) = \Pp(y | X, \theta) = \prod_{i=1}^m \Pp(y^{(i)} | x^{(i)}, \theta) = \prod_{i=1}^m \dfrac{1}{\sqrt{2 \pi} \sigma} \exp \left( - \dfrac{(y^{(i)} - \theta^\trans x^{(i)})^2}{2 \sigma^2} \right) $$
+Une bonne manière d'étudier la vraisemblance est de la passer au logarithme car elle est souvent log-concave. La log-vraisemblance est notée $l(\theta) = \ln L(\theta)$. Voici alors ce qu'on obtient si on simplifie l'expression de la log-vraisemblance :
+
+$$ \begin{array}{lll}
+	l(\theta)
+	& = & \displaystyle \sum_{i = 1}^m \ln \left( \dfrac{1}{\sqrt{2 \pi} \sigma} \exp \left( - \dfrac{(y^{(i)} - \theta^\trans x^{(i)})^2}{2 \sigma^2} \right) \right) \\
+	& = & \displaystyle \sum_{i = 1}^m \ln \dfrac{1}{\sqrt{2 \pi} \sigma} + \sum_{i = 1}^m \left( \exp \left( - \dfrac{(y^{(i)} - \theta^\trans x^{(i)})^2}{2 \sigma^2} \right) \right) \\
+	& = & \displaystyle m \ln \dfrac{1}{\sqrt{2 \pi} \sigma} - \sum_{i = 1}^m \dfrac{(y^{(i)} - \theta^\trans x^{(i)})^2}{2 \sigma^2}
+\end{array} $$
+Ainsi maximiser $l(\theta)$ revient à minimiser $\displaystyle J(\theta) = \sum_{i = 1}^m \dfrac{(y^{(i)} - \theta^\trans x^{(i)})^2}{2}$ \\
+Donc lorsque l'on utilise l'algorithme des moindres carrées, on maximise simplement la vraisemblance en assumant que les erreurs sur les $y^{(i)}$ sont i.i.d selon une loi normale.
+
 \sect{Régression régularisée}
+
+Comme on l'a vu à la fin du chapitre précédent, il y a des risques d'overfitting. Une solution est la régularisation. On parle de régularisation \textbf{ridge} pour la norme $l_2$ et de régularisation \textbf{LASSO} pour la norme $l_1$.
+
+\begin{center}
+	\begin{tikzpicture}[thick, >={latex}]
+	\draw[domain=0:360, smooth, variable=\t, very thick, fill=greenTikz, fill opacity=0.6]
+	plot ({1.800000 + 3.035357 * cos(\t) + 0.443197 * sin(\t)}, {1.700000 + -1.107992 * cos(\t) + 1.214143 * sin(\t)});
+	\draw[domain=0:360, smooth, variable=\t, very thick] 
+	plot ({1.800000 + 0.758839 * cos(\t) + 0.110799 * sin(\t)}, {1.700000 + -0.276998 * cos(\t) + 0.303536 * sin(\t)});
+	\draw[domain=0:360, smooth, variable=\t, very thick] 
+	plot ({1.800000 + 1.517678 * cos(\t) + 0.221598 * sin(\t)}, {1.700000 + -0.553996 * cos(\t) + 0.607071 * sin(\t)});
+	\draw[domain=0:360, smooth, variable=\t, very thick] 
+	plot ({1.800000 + 2.276518 * cos(\t) + 0.332398 * sin(\t)}, {1.700000 + -0.830994 * cos(\t) + 0.910607 * sin(\t)});
+	
+	\draw[domain=0:360, smooth, variable=\t, very thick, fill=greenTikz, fill opacity=0.6]
+	plot ({10.800000 + 3.289353 * cos(\t) + 0.480283 * sin(\t)}, {1.700000 + -1.200708 * cos(\t) + 1.315741 * sin(\t)});
+	\draw[domain=0:360, smooth, variable=\t, very thick] 
+	plot ({10.800000 + 0.822338 * cos(\t) + 0.120071 * sin(\t)}, {1.700000 + -0.300177 * cos(\t) + 0.328935 * sin(\t)});
+	\draw[domain=0:360, smooth, variable=\t, very thick] 
+	plot ({10.800000 + 1.644677 * cos(\t) + 0.240142 * sin(\t)}, {1.700000 + -0.600354 * cos(\t) + 0.657871 * sin(\t)});
+	\draw[domain=0:360, smooth, variable=\t, very thick] 
+	plot ({10.800000 + 2.467015 * cos(\t) + 0.360212 * sin(\t)}, {1.700000 + -0.900531 * cos(\t) + 0.986806 * sin(\t)});
+	
+	\draw[->] (0, -1.5) -- (0, 3.8);
+	\draw[->] (-2, 0) -- (5, 0);
+	\draw[->] (9, -1.5) -- (9, 3.8);
+	\draw[->] (7, 0) -- (14, 0);
+	\draw[very thick, fill=purple] (0, 0) circle (1);
+	\draw[very thick, fill=purple] (9, 1) -- (8, 0) -- (9, -1) -- (10, 0) -- cycle;
+	\fill[redLight] (9, 1) circle (0.16);
+	\fill[redLight] (0.342898, 0.939373) circle (0.16);
+	\node[red] at (4, 3.5) {Ridge};
+	\node[red] at (13, 3.5) {LASSO};
+	\end{tikzpicture}
+\end{center}
+
+\PROP[ (Forme fermée pour Ridge)]{
+	Pour le régression ridge, la solution de forme fermée est la suivante :
+	$$\theta = (X^\trans X + \lambda I_{n+1})^{-1} X^\trans y $$
+	\vspace{-8mm}
+}
+
+\PROP[ (Stabilité uniforme pour Ridge)]{
+	Avec la régression ridge, on obtient la borne de généralisation suivante :
+	$$ \trisk(h_\theta) \leqslant \erisk(h_\theta) + \dfrac{4 B^2}{\lambda m} + \left( \dfrac{8 B^2}{\lambda} + 2B \right) \sqrt{\dfrac{\ln 1/\delta}{2m}} $$
+	Où $\Y$ est bornée et $\Y = [0, B]$.
+}
+
+En revanche pour la régularisation LASSO, on ne dispose pas de résultats précis, mais on sait que l'utilisation de cette régularisation conduit à une diminution du nombre de paramètres non nuls. Ainsi LASSO permet d'avoir le vecteur $\bm{\theta}$ \textbf{creux}.
 
 \sect{Machine à vecteur de support (SVM)}
 
