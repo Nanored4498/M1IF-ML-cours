@@ -150,8 +150,8 @@ Pour gagner en robustesse et garder l'efficacité de la descente stochastique, o
 \subs{Solution de forme fermée}
 
 On pose les vecteurs et matrices suivantes :
-$$ x^{(j)} = \begin{pmatrix} 1 & x_1^{(j)} & \dots & x_n^{(j)} \end{pmatrix} \qquad
-X = \begin{pmatrix} x^{(1)} \\ \vdots \\ x^{(m)} \end{pmatrix} \qquad 
+$$ x^{(j)} = \begin{pmatrix} x_0^{(j)} \\ \vdots \\ x_n^{(j)} \end{pmatrix} \qquad
+X = \begin{pmatrix} {x^{(1)}}^\trans \\ \vdots \\ {x^{(m)}}^\trans \end{pmatrix} \qquad 
 \theta = \begin{pmatrix} \theta_0 \\ \vdots \\ \theta_n \end{pmatrix} \qquad
 y = \begin{pmatrix} y^{(1)} \\ \vdots \\ y^{(m)} \end{pmatrix} $$
 Cela nous permet de réécrire $J(\theta)$.
@@ -257,6 +257,23 @@ Comme on l'a vu à la fin du chapitre précédent, il y a des risques d'overfitt
 
 En revanche pour la régularisation LASSO, on ne dispose pas de résultats précis, mais on sait que l'utilisation de cette régularisation conduit à une diminution du nombre de paramètres non nuls. Ainsi LASSO permet d'avoir le vecteur $\bm{\theta}$ \textbf{creux}.
 
-\sect{Machine à vecteur de support (SVM)}
+\sect{Machine à vecteur de support (SVR)}
+
+Jusque là nous utilisé la méthode des moindres carrés. Il y a aussi la \textbf{perte $\bm{\epsilon}$-sensible} :
+$$ \min_{\theta, \xi, \xi^*} \frac{1}{2} \| \theta \|_2^2 + C \sum_{i = 1}^m \left( \xi_ + \xi_i^* \right) $$
+\vspace{-3mm}
+$$ \text{s.t. } \left\{ \begin{array}{l}
+	y^{(i)} - \theta^\trans x^{(i)} \leqslant \epsilon + \xi_i \\
+	\theta^\trans x^{(i)} - y^{(i)} \leqslant \epsilon + \xi_i^* \\
+	\xi_i, \xi_i^* \geqslant 0
+\end{array} \right. $$
+
+Le laplacien de ce problème est alors le suivant :
+$$ L(\theta, \xi, \xi^*, \alpha, \alpha^*, \beta, \beta^*) = \dfrac{1}{2} \| \theta \|^2 + C \mathbbm{1}_m^\trans \left( \xi + \xi^* \right) + \alpha^\trans \left( y - X \theta - \epsilon \mathbbm{1}_m - \xi \right) + {\alpha^*}^\trans \left( X \theta - y - \epsilon \mathbbm{1}_m - \xi \right) - \beta^\trans \xi - {\beta^*}^\trans \xi^*$$
+On rappelle que la fonction objective du dual est :
+$$ g(\alpha, \alpha^*, \beta, \beta^*) = \inf_{\theta, \xi, \xi^*} L(\theta, \xi, \xi^*, \alpha, \alpha^*, \beta, \beta^*) $$
+On cherche maintenant ce que vaut $\theta$ dans l'expression de $g$.
+$$ \dfrac{\partial L}{\partial \theta} = \theta - X^\trans \alpha + X^\trans \alpha^* $$
+D'où $\theta = X^\trans (\alpha - \alpha*)$.
 
 \sect{De la régression à la classification}
