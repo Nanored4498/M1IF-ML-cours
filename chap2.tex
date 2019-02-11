@@ -261,7 +261,7 @@ En revanche pour la régularisation LASSO, on ne dispose pas de résultats préc
 
 Jusque là nous utilisé la méthode des moindres carrés. Il y a aussi la \textbf{perte $\bm{\epsilon}$-sensible} :
 $$ \min_{\theta, \xi, \xi^*} \frac{1}{2} \| \theta \|_2^2 + C \sum_{i = 1}^m \left( \xi_ + \xi_i^* \right) $$
-\vspace{-3mm}
+\vspace{-2mm}
 $$ \text{s.t. } \left\{ \begin{array}{l}
 	y^{(i)} - \theta^\trans x^{(i)} \leqslant \epsilon + \xi_i \\
 	\theta^\trans x^{(i)} - y^{(i)} \leqslant \epsilon + \xi_i^* \\
@@ -274,6 +274,18 @@ On rappelle que la fonction objective du dual est :
 $$ g(\alpha, \alpha^*, \beta, \beta^*) = \inf_{\theta, \xi, \xi^*} L(\theta, \xi, \xi^*, \alpha, \alpha^*, \beta, \beta^*) $$
 On cherche maintenant ce que vaut $\theta$ dans l'expression de $g$.
 $$ \dfrac{\partial L}{\partial \theta} = \theta - X^\trans \alpha + X^\trans \alpha^* $$
-D'où $\theta = X^\trans (\alpha - \alpha*)$.
+$$ \dfrac{\partial L}{\partial \xi} = C \mathbbm{1}_m - \alpha - \alpha^* - \beta \qquad \qquad
+\dfrac{\partial L}{\partial \xi^*} = C \mathbbm{1}_m - \alpha - \alpha^* - \beta^* $$
+D'où $\theta = X^\trans (\alpha - \alpha*)$ et $\beta = \beta^* = C \mathbbm{1} - (\alpha + \alpha^*)$. On obtient alors :
+$$ g(\alpha, \alpha^*) = -\dfrac{1}{2} (\alpha - \alpha^*)^\trans X X^\trans (\alpha - \alpha^*) + (\alpha - \alpha^*)^\trans y - \epsilon (\alpha + \alpha^*)^\trans \mathbbm{1}_m $$
+Et on a la condition $\alpha + \alpha^* \leqslant C \mathbbm{1}_m$ car $\beta$ et $\beta^*$ sont positifs. \\ Soit alors $(\alpha, \alpha^*)$ une solution. Supposons $\alpha \geqslant \alpha^*$. On pose $\nu = \alpha - \alpha^*$. On a alors $\nu \leqslant \alpha + \alpha^*$ et $\nu - 0 = \alpha - \alpha^*$. Donc $(\nu, 0)$ est aussi une solution, et $g(\nu, 0) \geqslant g(\alpha, \alpha^*)$. \\
+On obtient finalement le problème dual suivant :
+\begin{center}
+	\fbox{$ \displaystyle \min_{|\nu_i| \leqslant C} \dfrac{1}{2} \left\| X^\trans \nu \right\|_2^2 - \nu^\trans y + \epsilon \| \nu \|_1 $}
+\end{center}
+Dans ce cas, on a $\theta = X^\trans \nu$, et $h_\nu(x) = \theta^\trans x = \nu^\trans X x$.
+
+\paragraph{Astuce du noyau}
+Dans le cas non, linéaire il existe une astuce du noyau. Il est bon de le savoir mais je ne vais pas en parler ici.
 
 \sect{De la régression à la classification}
