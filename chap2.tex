@@ -289,3 +289,35 @@ Dans ce cas, on a $\theta = X^\trans \nu$, et $h_\nu(x) = \theta^\trans x = \nu^
 Dans le cas non, linéaire il existe une astuce du noyau. Il est bon de le savoir mais je ne vais pas en parler ici.
 
 \sect{De la régression à la classification}
+
+\subs{Régression logistique}
+
+Jusqu'à maintenant, nous avons considéré $y \in \R$. On se place désormais dans le cas où $y \in \{0, 1\}$. Par exemple $y = 1$ lorsque le patient a une maladie et $y = 0$ sinon. Dans ce cas c'est généralement une  mauvaise idée d'utiliser un régression linéaire.
+
+\begin{center}
+	\begin{tikzpicture}[scale=2, thick, >={latex}]
+		\draw[->] (-0.2, 0) -- (2.3, 0);
+		\draw[->] (0, -0.2) -- (0, 1.3);
+		\draw[fill=blue] (0.2, 0) circle(0.04);
+		\draw[fill=blue] (0.3, 0) circle(0.04);
+		\draw[fill=blue] (0.4, 0) circle(0.04);
+		\draw[fill=blue] (0.5, 0) circle(0.04);
+		\draw[fill=blue] (0.6, 1) circle(0.04);
+		\draw[fill=blue] (0.7, 1) circle(0.04);
+		\draw[fill=blue] (0.8, 1) circle(0.04);
+		\draw[fill=blue] (0.9, 1) circle(0.04);
+		\draw[fill=blue] (2, 1) circle(0.04);
+		\draw[domain=0:1.8, smooth, variable=\x, red] plot ({\x}, {0.107+0.631*\x});
+	\end{tikzpicture}
+\end{center}
+
+On utilise alors la régression logistique.
+
+\DEF{
+	La fonction \textbf{sigmoïde (logistique)} est définie par :
+	$$ g(z) = \dfrac{1}{1 + e^{-z}} $$
+	\vspace{-5mm}
+}
+
+Cette fonction nous permet de définir le nouveau modèle :
+$$ h_\theta(x) = g \letf( \theta^\trans x \right) = \dfrac{1}{1 + e^{-\theta^\trans x}} $$
