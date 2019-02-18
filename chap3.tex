@@ -266,3 +266,115 @@ Puis on supprimer les exemples qui ne sont pas très révélateurs.
 \paragraph{Augmenter la rapidité}
 En 2D ou en 3D on peut utiliser des diagrammes de Voronoi ou encore des graphes de proximité.
 En plus grande dimension on peut utiliser les structures de données suivantes : ball-trees, kd-trees, metric-trees, quadtrees et R-trees.
+
+\paragraph{Classification naïve bayésienne}
+La classification naïve bayésienne suppose en plus que les features sont indépendantes.
+$$ \hat{y}(x_1, ..., x_n) = \argmax_c \prod_{i=1}^n p(x_i | y_c).p(y_c) $$
+Cette classification est beaucoup moins sensible à la dimension comme chaque probabilité peut être estimée comme une distribution de dimension 1. Il n'y a alors plus de malédiction de la dimensionnalité. De plus cela rend plus lisse la probabilité obtenue.
+
+\paragraph{Question} Comment peut-on améliorer la qualité de la métrique utilisée dans k-NN ?
+
+\sect{Apprentissage de métriques}
+
+On commence par rappeler ce q'est une distance sur un espace $X$.
+
+\DEF{
+	Une \textbf{métrique/distance} sur un espace $X$ est une fonction positive $d : X \times X \rightarrow \R_+$ qui vérifie les conditions suivantes :
+	\begin{itemize}
+		\item Positivité : $d(x, y) \geqslant 0$
+		\item Séparation : $d(x, y) = 0 \Leftrightarrow x = y$
+		\item Symétrie : $d(x, y) = d(y, x)$
+		\item Inégalité triangulaire : $d(x, z) \leqslant d(x, y) + d(y, z)$
+	\end{itemize}
+}
+
+Les normes $l_p$ sont des distances. La norme $l_1$ est appelée \textbf{distance de Manhattan}, la norme $l_2$ est appelée \textbf{distance euclidienne} et la norme $l_\infty$ est appelée \textbf{distance de Tchebychev}. \\
+Mais comment choisir la bonne métrique ? L'idée est d'apprendre une métrique qui assigne une faible distance aux paires d'exemples qui sont sémantiquement similaire (par exemple qui ont la même classe dans le cas de la classification supervisée) et qui assigne une distance élevée aux paires d'exemples qui ne sont sémantiquement différents.
+
+\begin{center}
+	\begin{tikzpicture}[scale=4, thick, >={latex}]
+		\draw[fill=red] (0.45, 0.2) circle (0.06);
+		\draw[fill=red] (0.13, 0.6) circle (0.06);
+		\draw[fill=blue] (0.22, 0.3) circle (0.06);
+		\draw[fill=blue] (0.52, 0.52) circle (0.06);
+		\draw[fill=blue] (0.2, 0.85) circle (0.06);
+		\draw[fill=blue] (0.87, 0.75) circle (0.06);
+		\draw (0, 0) rectangle (1, 1);
+		\draw[fill=red] (2.08, 0.55) circle (0.06);
+		\draw[fill=red] (2.16, 0.4) circle (0.06);
+		\draw[fill=blue] (2.45, 0.45) circle (0.06);
+		\draw[fill=blue] (2.6, 0.52) circle (0.06);
+		\draw[fill=blue] (2.52, 0.65) circle (0.06);
+		\draw[fill=blue] (2.77, 0.61) circle (0.06);
+		\draw[dashed] (2.595, 0.555) circle (0.255);
+		\draw[dashed] (2.595, 0.555) circle (0.39);
+		\draw (2, 0) rectangle (3, 1);
+		
+		\node at (1.5, 0.55) {\large Apprentissage};
+		\draw[line width=6, ->] (1.05, 0.42) -- (1.95, 0.42);
+	\end{tikzpicture}
+\end{center}
+
+\DEF{
+	La \textbf{distance de Mahalanobis} est définie de la manière suivante :
+	$$ d_M(x, x') = \sqrt{(x - x')^\trans M (x - x')} $$
+	Où $M \in \R^{d \times d}$ est une matrice symétrique définie positive.
+}
+
+Cette distance vient du cas où $x$ et $x'$ suivent la même distribution de matrice de covariance $\Sigma$ et dans ce cas $M = \Sigma^{-1}$. \\
+On peut décider de prendre $M$ uniquement positive et pas définie positive, c'est à dire autoriser $M$ à avoir des valeurs propres nulles. Cela permet de faire une réduction de dimension. \\
+De plus comme $M$ est symétrique positive on peut l'écrire de la manière suivante : $M = L^\trans L$. Dans ce cas en posant $\tilde{x} = Lx$, on a :
+$$ \begin{array}{lll}
+d_M(x, x')
+& = & \sqrt{(x - x')^\trans L^\trans L (x - x')} \\
+& = & \sqrt{(Lx - Lx')^\trans (Lx - Lx')} \\
+& = & \sqrt{(\tilde{x} - \tilde{x}')^\trans (\tilde{x} - \tilde{x}')} \\
+& = & d_{euc}(\tilde{x}, \tilde{x}')
+\end{array} $$
+
+\paragraph{Apprentissage}
+Désormais, étant donnée une métrique paramétrisée par $M$, on va essayer de résoudre le problème d'optimisation suivant:
+$$ M^*=\argmin_{M \succeq 0} l(M, \mathcal{S}, \mathcal{D}, \mathcal{R}) + \lambda R(M) $$
+Où $l$ est une fonction de perte qui pénalise des contraintes violées, $R$ est un régularisateur de $M$ et $\lambda$ est un paramètre qui permet de contrôler l'importance de la régularisation. L'état de l'art se différencie alors par les choix de la fonction de perte, des contraintes et du régularisateur. \\
+Les contraintes sont les suivantes :
+\begin{itemize}
+	\item $\displaystyle \mathcal{S} = \left\{ (x, x')~|~x \text{ et } x' \text{ sont similaires} \right\}$
+	\item $\displaystyle \mathcal{D} = \left\{ (x, x')~|~x \text{ et } x' \text{ sont éloignés} \right\}$
+	\item $\displaystyle \mathcal{R} = \left\{ (x, x', x'')~|~x \text{ est plus proche de } x' \text{ que de } x'' \right\}$
+\end{itemize}
+Les régularisateurs usuels sont les suivants :
+\begin{itemize}
+	\item La norme de Frobenius (simple et classique) $\| M \|_\mathcal{F}^2 = \sum_{i, j} M_{ij}^2$.
+	\item La sélections de features avec la norme mixe $L_{2, 1}$ : $\| M \|_{2, 1} = \sum_i \| M_i \|_2$. \\ Cette norme est bien convexe mais elle n'est pas lisse.
+	\item La favorisation des matrices de rang faible pour la réduction de dimension \\
+		$\| M \|_* = tr(M) = \sum_i \sigma_i(M) $.
+	\item L'utilisation de la LogDet divergence.
+\end{itemize}
+
+\paragraph{LMNN}
+L'algorithme LMNN considère les ensembles de contraintes suivants :
+$$ \mathcal{S} = \left\{ (x_i, x_j)~|~y_i = y_j \text{ et } x_j \text{ appartient aux } k \text{ plus proches voisins de } x_i \right\} $$
+$$ \mathcal{R} = \left\{ (x_i, x_j, x_k)~|~(x_i, x_j) \in \mathcal{S}, \, y_i \neq y_k \right\} $$
+La formulation stricte est alors la suivante :
+$$ \min_{M \succeq 0} \quad \sum_{(x_i, x_j) \in \mathcal{S}} d_M^2(x_i, x_j) $$
+\vspace{-4mm}
+$$ s.t. \quad \forall (x_i, x_j, x_k) \in \mathcal{R}, \; d_M^2(x_i, x_k) - d_M^2(x_i, x_j) \geqslant 1 $$
+La formulation douce est la suivante :
+$$ \min_{M \succeq 0} \quad (1 - \mu) \sum_{(x_i, x_j) \in \mathcal{S}} d_M^2(x_i, x_j) + \mu \sum_{i, j, k} \xi_{ijk} $$
+\vspace{-4mm}
+$$ s.t. \quad \forall (x_i, x_j, x_k) \in \mathcal{R}, \; d_M^2(x_i, x_k) - d_M^2(x_i, x_j) \geqslant 1 - \xi_{ijk} $$
+Où $\mu$ contrôle la contrepartie entre attirer les exemples proches et éloigner les exemples d'étiquettes différentes. \\
+L'avantage de cet apprentissage est qu'il est convexe et qu'il possède un solveur efficace même pour un large nombre de contraintes. Le désavantage est qu'il est soumis à l'overfitting lorsque la dimension est élevée.
+
+\paragraph{ITML} L'Information-Thoretical Metric Learning introduit une régularisation utilisant la divergence LogDet définie par :
+$$ D_{id}(M, M_0) = tr \left (MM_0^{-1} \right) - \log \det \left( MM_0^{-1} \right) - d $$
+Où $d$ est la dimension et $M_0$ est une matrice symétrique positive dont on veut rester proche. L'ITML est formulé de la manière suivante :
+$$ \min_{M \succeq 0} \quad D_{id}(M, M_0) $$
+\vspace{-4mm}
+$$ s.t. \quad \left\{ \begin{array}{ll}
+	\forall (x_i, x_j) \in \mathcal{S} & d_M^2(x_i, x_j) \leqslant u \\
+	\forall (x_i, x_j) \in \mathcal{D} & d_M^2(x_i, x_j) \geqslant v
+\end{array} \right.$$
+
+\paragraph{Non-linéarité}
+LMNN et ITML génèrent des transformations linéaires qui sont incapable ce capturer des structures non linéaires dans les données. Comme solution à ce problème on peut utiliser des noyaux comme KPCA (PCA dans un espace noyau) ou des métriques locales. Pour les métriques locales on peut par exemples partitionner notre ensemble en C clusters puis apprendre une distance de Mahalanobis sur chacun de ces clusters.
