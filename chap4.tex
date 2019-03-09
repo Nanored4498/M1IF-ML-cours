@@ -2,8 +2,154 @@
 
 \myminitoc
 
-\sect{Introduction}
+\sect{Introduction - Maximisation de la variance}
 
-\sect{Maximisation de la variance}
+L'\textbf{analyse de composante principale (PCA)} est une réduction de la dimension. Elle projette en semble de points vivant dans un espace de dimension {\boldmath $d$} sur un sous-espace de dimension {\boldmath $M$}~$< d$. Si $M = 2$ alors on peut visualiser les données. L'analyse génère de nouvelles features qui sont décorrélés et qui un sens qui permet de bien discriminer les données.
+
+\begin{center}
+	\begin{tikzpicture}[thick]
+		\draw[purple, very thick] (0, -0.846) -- (8, 3.804);
+		\draw[greenTikz] (0.491, 0.039) -- (0.751, -0.409);
+		\draw[fill=red] (0.491, 0.039) circle (0.15);
+		\draw[fill=greenTikz] (0.751, -0.409) circle (0.15);
+		\draw[greenTikz] (3.370, 0.587) -- (3.141, 0.980);
+		\draw[fill=red] (3.370, 0.587) circle (0.15);
+		\draw[fill=greenTikz] (3.141, 0.980) circle (0.15);
+		\draw[greenTikz] (1.769, -0.248) -- (1.582, 0.073);
+		\draw[fill=red] (1.769, -0.248) circle (0.15);
+		\draw[fill=greenTikz] (1.582, 0.073) circle (0.15);
+		\draw[greenTikz] (5.370, 3.037) -- (5.701, 2.468);
+		\draw[fill=red] (5.370, 3.037) circle (0.15);
+		\draw[fill=greenTikz] (5.701, 2.468) circle (0.15);
+		\draw[greenTikz] (6.241, 2.376) -- (6.064, 2.679);
+		\draw[fill=red] (6.241, 2.376) circle (0.15);
+		\draw[fill=greenTikz] (6.064, 2.679) circle (0.15);
+	\end{tikzpicture} \\
+	Ici $d=2$ et $M=1$.
+	\vspace{1mm}
+\end{center}
+
+Supposons que notre ensemble d'entraînement a une moyenne nulle, (cela peut être obtenu en remplaçant les $x_i$ par $x_i - \bar{x}$). PCA cherche une transformation linéaire $U$ qui à $x_i$ associera le nouveau point :
+$$ t_i = U^\trans x_i $$
+Où $U = (u_1, ..., u_M)$ est une matrice de dimension $d \times M$. Les vecteurs $u_j$ représentent une base de notre sous espace de $R^d$. De plus on souhaite que la base soit orthonormale. On obtient donc la contrainte suivante :
+$$ U^\trans U = I_M $$
+On peut aussi définir la reconstruction d'un point du nouveau sous-espace par $\hat{x}_i = U t_i$. Dans ce cas on veut minimiser l'erreur quadratique moyenne $J(U)$ entre $x$ et $\hat{x}$ tout en essayant de garder $M$ aussi petit que possible.
+$$ \begin{array}{lll}
+\displaystyle \min_U J(U)
+& = & \displaystyle \min_U~\dfrac{1}{n} \sum_i (x_i - \hat{x}_i)² \\
+& = & \displaystyle \min_U~\dfrac{1}{n} \sum_i (x_i - UU^\trans x_i)^\trans (x_i - UU^\trans x_i) \\
+& = & \displaystyle \min_U~\dfrac{1}{n} \sum_i (x_i^\trans x_i - 2 xi^\trans UU^\trans x_i + x_i^\trans U U^\trans U U^\trans x_i)
+\end{array} $$
+On utilise alors la contrainte $U^\trans U = I_M$ :
+$$ \begin{array}{lll}
+\displaystyle \min_U J(U)
+& = & \displaystyle \min_U~\dfrac{1}{n} \sum_i (x_i^\trans x_i - xi^\trans UU^\trans x_i) \\
+& = & \displaystyle \min_U~\dfrac{1}{n} \sum_i (x_i^\trans x_i - t_i^\trans t_i) \\
+& = & \displaystyle \min_U~tr \left( \dfrac{1}{n} \sum_i x_i x_i^\trans - t_i t_i^\trans \right) \\
+& = & \displaystyle \min_U~tr \left( \dfrac{1}{n} \sum_i x_i x_i^\trans - U^\trans x_i x_i^\trans U \right) \\
+& = & \displaystyle \min_U~tr \left( \dfrac{1}{n} \sum_i x_i x_i^\trans \right) - tr \left( \dfrac{1}{n} \sum_i U^\trans x_i x_i^\trans U \right) \\
+& = & \displaystyle \min_U~tr \left( \dfrac{1}{n} \sum_i x_i x_i^\trans \right) - tr \left( U^\trans \left( \dfrac{1}{n} \sum_i x_i x_i^\trans \right) U \right) \\
+& = & \displaystyle \min_U~tr \left( \Sigma \right) - tr \left( U^\trans \Sigma U \right)
+\end{array} $$
+Où {\boldmath $\Sigma$} est la \textbf{matrice de covariance} des données d'origine et $U^\trans \Sigma U$ est la matrice de covariance dans le nouvelle espace. \\
+Comme $tr(\Sigma)$ ne dépend pas de $U$ minimiser $J(U)$ revient à maximiser $tr(U^\trans \Sigma U)$. On obtient donc le problème suivant :
+\begin{center}
+	\fbox{
+	\parbox{7cm}{
+	$$ \max_{u_1, ..., u_M} \sum_j u_j^\trans \Sigma u_j $$
+	\vspace{-4mm}
+	$$ \text{s.t.} \quad \forall j, k \in \{ 1, ..., M \}, \, u_j^\trans u_k = \delta_{j, k} $$
+	\vspace{-4mm}
+	}
+	}
+\end{center}
 
 \sect{Solution de forme fermée}
+
+La matrice de covariance $\Sigma$ est symétrique donc en utilisant le théorème spectrale on obtient l'existence d'une matrice diagonale $D = diag(\lambda_1, ..., \lambda_d)$ et l'existence d'une matrice orthogonale $V$ tel que $\Sigma = V D V^\trans$. On ordonne les valeurs propres de $\Sigma$ de telle sorte que $\lambda_1 \geqslant ... \geqslant \lambda_d$. \\
+On cherche donc à maximiser la valeur suivante :
+$$ \begin{array}{lll}
+\displaystyle \sum_j u_j^\trans \Sigma u_j
+& = & \displaystyle \sum_j u_j^\trans V D V^\trans u_j \\
+& = & \displaystyle \sum_j \left( V^\trans u_j \right)^\trans D \left( V^\trans u_j \right) \\
+& = & \displaystyle \sum_{i, j} \left( v_i^\trans u_j \right) \lambda_i \left( v_i^\trans u_j \right) \\
+& = & \displaystyle \sum_{i, j} \lambda_i \left( v_i^\trans u_j \right)^2 \\
+\end{array} $$
+Comme les $(u_j)$ forment une famille orthonormale, on peut la compléter par des vecteurs $w_{M+1}, ..., w_d$ pour former une base orthonormale. Ainsi la matrice formé des colonnes $W = (u_1, ..., u_M, w_{M+1}, ..., w_d)$ est une matrice orthogonale. Comme $V$ est aussi orthogonale, le produit $V^\trans W$ est une matrice orthogonale. Puis, en utilisant le fait que les lignes d'une matrice orthogonale sont de norme 1, on obtient :
+$$ \forall i, \quad \alpha_i = \sum_{j = 1}^M \left( v_i^\trans u_j \right)^2 = 1 - \sum_{j = M+1}^d \left( v_i^\trans w_j \right)^2 \leqslant 1 $$
+De plus, les vecteurs $(v_i)$ formant une base orthonormé, on obtient $\sum_i \left( v_i^\trans u_j \right)^2 = u_j^\trans u_j = 1$. D'où :
+$$ \sum_i \alpha_i = \sum_{i, j} \left( v_i^\trans u_j \right)^2 = M $$
+Notre problème s'écrit alors :
+$$ \max_\alpha \sum_i \lambda_i \alpha_i $$
+\vspace{-2mm}
+$$ \text{s.t.} \quad \left\{ \begin{array}{l}
+\forall i, \, \alpha_i \leqslant 1 \\
+\sum_i \alpha_i = M
+\end{array} \right. $$
+Une solution optimale est alors $\alpha_i = 1$ si $i \leqslant M$ et $\alpha_i = 0$ si $i > M$. Ces valeurs de $\alpha_i$ peuvent être obtenue avec $u_j = v_j$. \\
+{\boldmath \textbf{Trouver} $U$ \textbf{revient alors à trouver les vecteurs propres correspondant aux plus grandes valeurs propres de} $\Sigma$}.
+
+\paragraph{Qualité de la projection}
+Pour ne pas perdre d'information on peut prendre $M$ le nombre de valeurs propres non nulles de $\Sigma$. La somme des valeurs propres correspond à la variance de données. Si on s'autorise une perte de variance, on peut alors définir le ratio de la variance conserver :
+$$ \dfrac{\lambda_1 + ... + \lambda_M}{\lambda_1 + ... + \lambda_d} $$
+Plus ce ration est élevé meilleur est notre projection.
+
+\paragraph{Complexité}
+La complexité de PCA est alors la complexité de la décomposition en vecteur propre d'une matrice de taille $d \times d$. La complexité est alors en $\mathcal{O}(d^3)$. \\
+Cependant si $M$ est suffisamment petit on peu utiliser la méthode de la puissance pour une complexité en $\mathcal{O}(Md^2)$.
+
+\paragraph{Limitations}
+Une première limitation est que PCA est très sensibles aux valeurs aberrantes.
+\begin{center}
+	\begin{tikzpicture}[thick]
+		\draw[greenTikz, very thick] (0, 0.479) -- (7.155, 2.809);
+		\draw[blue, very thick] (0, 0) -- (7.155, 3.578);
+		\draw[fill=red] (2.712, 1.356) circle (0.15);
+		\draw[fill=red] (6.431, 3.215) circle (0.15);
+		\draw[fill=red] (5.061, 2.531) circle (0.15);
+		\draw[fill=red] (0.330, 0.165) circle (0.15);
+		\draw[fill=red] (6.326, 3.163) circle (0.15);
+		\draw[fill=red] (1.298, 0.649) circle (0.15);
+		\draw[fill=red] (0.059, 0.029) circle (0.15);
+		\draw[fill=red] (0.852, 0.426) circle (0.15);
+		\draw[fill=red] (6.557, 3.278) circle (0.15);
+		\draw[fill=red] (5.409, 2.704) circle (0.15);
+		\draw[fill=red] (2.209, 1.105) circle (0.15);
+		\draw[fill=red] (2.868, 1.434) circle (0.15);
+		\draw[fill=red] (2.291, 1.146) circle (0.15);
+		\draw[fill=red] (5.678, 2.839) circle (0.15);
+		\draw[fill=red] (3.428, 1.714) circle (0.15);
+		\draw[fill=red] (4.888, 0.203) circle (0.15);
+		\draw[fill=red] (6.743, 0.796) circle (0.15);
+		\draw[fill=red] (0.013, 3.395) circle (0.15);
+		\draw[fill=red] (3.097, 0.528) circle (0.15);
+	\end{tikzpicture}
+\end{center}
+De plus PCA réalise une transformation linéaire et n'est pas capable de détecter des relations polynomiale entre les différentes features. PCA se contente de placer les points les plus différents loin des autres afin de conserver la variance dans un espace de faible dimension. Il serait bien que PCA essaye aussi de garder proche les points similaires. Cela nous amène au besoin d'une réduction de dimension non linéaire.
+
+\paragraph{PCA avec noyau}
+Pour obtenir une transformation non linéaire on peut utiliser un noyau $K$ tel que $K(x, x')$ est grand lorsque $x$ et $x'$ sont similaires. Si on possède $m$ exemples alors grâce à ce noyau on peut construire la matrice de Gram de taille $m \times m$ tel que $M_{ij} = K(x_i, x_j)$. On utilise alors PCA sur cette nouvelle matrice ce qui nous donnera une transformation non linéaire.
+\begin{center}
+	\begin{tikzpicture}[scale=0.3]
+		\input{pca_kernel.tikz}
+	\end{tikzpicture}
+	\begin{tikzpicture}[scale=1.4]
+		\input{pca_kernel2.tikz}
+	\end{tikzpicture}
+\end{center}
+Ici on part de l'ensemble de points de l'image de gauche. La séparation est clairement non linéaire, PCA ne fonctionnera donc pas sur cet échantillon. On utilise alors un noyau gaussien défini par :
+$$ K(x, y) = \exp \left( - \dfrac{\| x - y \|_2^2}{2 \sigma^2} \right) $$
+En utilisant KPCA (PCA avec ce noyau) on projette nos points sur un nouvel espace de dimension 2 situé à droite. La transformation entre l'espace de gauche et l'espace de droite n'est clairement pas linéaire. La première composante de notre nouvel espace nous permet de bien distinguer les 3 cercles.
+
+\paragraph{t-SNE}
+L'algorithme t-SNE pour t-distributed stochastic neighbor embedding construit une distributions de probabilité $P$ sur toute les paires d'exemples de notre ensemble de données que la probabilité d'une paire de points est grande lorsque ces points sont proches et la probabilité d'une paire de points est faible lorsque les points sont éloignés. Cette distribution est typiquement obtenue avec un noyau. \\
+Puis l'algorithme construit une transformation qui à chaque point de notre ensemble de départ associe un nouveau point dans un nouvel espace de plus faible dimension $M \ll d$. On obtient de la même manière des distributions de probabilité $Q_i$ sur ce nouvel espace. Le but de t-SNE est alors de minimiser la divergence KL entre $P$ et $Q$ (en utilisant une descente de gradient). \\
+Pour la distribution un exemple classique est le suivant :
+$$ p_{ij} = \dfrac{p_{i|j} + p_{j|i}}{2 m} \qquad \text{avec} \quad p_{j|i} = \dfrac{\exp \left( - \| x_i - x_j \|^2 / 2 \sigma_i^2 \right)}{\sum_{k \neq i} \exp \left( - \| x_i - x_k \|^2 / 2 \sigma_i^2 \right)} $$
+Ensuite à chaque point $x_i \in \R^d$ on associe un point $y_i \in R^M$ en essayant de minimiser la divergence KL :
+$$ \min_y KL(P || Q) = \min_y \sum_{j \neq i} p_{ij} \log \dfrac{p_{ij}}{q_{ij}} $$
+\begin{center}
+	\includegraphics[scale=0.4]{tsne1.png}
+	\includegraphics[scale=0.4]{tsne2.png}
+\end{center}
+Ici un exemple pour la classification de chiffres manuscrits. Les résultats sont bien meilleurs avec t-SNE mais hélas le temps de calcul est aussi bien plus long.
