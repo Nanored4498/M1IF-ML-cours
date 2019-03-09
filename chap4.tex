@@ -90,19 +90,20 @@ Une solution optimale est alors $\alpha_i = 1$ si $i \leqslant M$ et $\alpha_i =
 {\boldmath \textbf{Trouver} $U$ \textbf{revient alors à trouver les vecteurs propres correspondant aux plus grandes valeurs propres de} $\Sigma$}.
 
 \paragraph{Qualité de la projection}
-Pour ne pas perdre d'information on peut prendre $M$ le nombre de valeurs propres non nulles de $\Sigma$. La somme des valeurs propres correspond à la variance de données. Si on s'autorise une perte de variance, on peut alors définir le ratio de la variance conserver :
+Pour ne pas perdre d'information on peut prendre $M$ le nombre de valeurs propres non nulles de $\Sigma$. La somme des valeurs propres correspond à la variance de données. Si on s'autorise une perte de variance, on peut alors définir le ratio de la variance conservée :
 $$ \dfrac{\lambda_1 + ... + \lambda_M}{\lambda_1 + ... + \lambda_d} $$
-Plus ce ration est élevé meilleur est notre projection.
+Plus ce ratio est élevé meilleur est notre projection.
 
 \paragraph{Complexité}
-La complexité de PCA est alors la complexité de la décomposition en vecteur propre d'une matrice de taille $d \times d$. La complexité est alors en $\mathcal{O}(d^3)$. \\
-Cependant si $M$ est suffisamment petit on peu utiliser la méthode de la puissance pour une complexité en $\mathcal{O}(Md^2)$.
+La complexité de PCA est alors la complexité de la décomposition en vecteur propre d'une matrice de taille $d \times d$. La complexité est donc en $\mathcal{O}(d^3)$. \\
+Cependant si $M$ est suffisamment petit on peut utiliser la méthode de la puissance pour une complexité en $\mathcal{O}(Md^2)$.
 
 \paragraph{Limitations}
 Une première limitation est que PCA est très sensibles aux valeurs aberrantes.
 \begin{center}
-	\begin{tikzpicture}[thick]
+	\begin{tikzpicture}[thick, >={latex}]
 		\draw[greenTikz, very thick] (0, 0.479) -- (7.155, 2.809);
+		\draw[->] (6.3, 1.8) node[below] {\footnotesize composante principale apprise} -- (6, 2.35);
 		\draw[blue, very thick] (0, 0) -- (7.155, 3.578);
 		\draw[fill=red] (2.712, 1.356) circle (0.15);
 		\draw[fill=red] (6.431, 3.215) circle (0.15);
