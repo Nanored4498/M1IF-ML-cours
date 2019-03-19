@@ -160,4 +160,121 @@ Et voici maintenant ce que donne des barycentres avec 4 distributions :
 
 \sect{Comment calculer le transport optimal ?}
 
-Pour les calculs on repasse sur les espaces discrets.
+\subs{Dual}
+
+Pour les calculs on revient vers les espaces discrets. Nos mesures de probabilité sont des sommes de diracs :
+$$ \mu = \sum_{i=1}^n a_i \delta_{x_i} \qquad \nu = \sum_{j =1}^m b_j \delta_{y_j} $$
+Notre fonction de coût est une matrice $D \in \R_+^{n \times m}$ tel que $D_{ij} = d(x_i, y_j)^p$. Notre distribution conjointe $P$ est aussi une matrice de $\R_+^{n \times m}$ qui doit vérifier certaines contraintes pouvant se représenter de manière matricielle. L'ensemble dans lequel se trouve $P$ est le suivant :
+$$ U(a, b) = \left\{ P \in \R_+^{n \times m}~|~P \mathbbm{1}_m = a, \, P^\trans \mathbbm{1}_n = b \right\} $$
+
+\DEF{
+	La définition de la distance de Wasserstein dans un espace discret est la suivante :
+	$$ W_p^p(\mu, \nu) = \min_{P \in U(a, b)} \langle P, D \rangle $$
+	\vspace{-6mm}
+}
+
+\paragraph{Dual} On s'intéresse maintenant au problème dual. On introduit le lagrangien :
+$$ L(P, \alpha, \beta) = \langle P, D \rangle + \alpha^\trans (a - P \mathbbm{1}_m) + \beta^\trans (b - P^\trans \mathbbm{1}_n) $$
+La fonction objective du dual est :
+$$ g(\alpha, \beta) = \min_{P \geqslant 0} L(P, \alpha, \beta) = \min_{P \geqslant 0} \alpha^\trans a + \beta^\trans b + \langle P, D - \alpha \mathbbm{1}_m^\trans - \mathbbm{1}_n \beta^\trans \rangle $$
+Si la matrice $D - \alpha \mathbbm{1}_m^\trans - \mathbbm{1}_n \beta^\trans$ possède un coefficient négatif alors en faisant tendre le même coefficient de la matrice $P$ vers $+\infty$ on obtient pour minimum $-\infty$. En revanche si tous les coefficients sont positifs alors $\langle P, D - \alpha \mathbbm{1}_m^\trans - \mathbbm{1}_n \beta^\trans \rangle$ est positif et il suffit de prendre $P=0$ pour se retrouver avec une valeur nulle. On obtient alors :
+$$ g(\alpha, \beta) = \left\{ \begin{array}{ll}
+\alpha^\trans a + \beta^\trans b & \text{si } D - \alpha \mathbbm{1}_m^\trans - \mathbbm{1}_n \beta^\trans \geqslant 0 \\
+-\infty & \text{sinon}
+\end{array}\right. $$
+Finalement le dual est la maximisation de cette fonction $g$.
+
+\DEF{
+	Le \textbf{dual} du transport optimal a la formulation suivante :
+	$$ W_p^p(\mu, \nu) = \max_{\alpha \in \R^n, \, \beta \in \R^m \atop \alpha_i + \beta_j \leqslant D(x_i, y_j)^p} \alpha^\trans a + \beta^\trans b $$
+	\vspace{-5mm}
+}
+
+Avec un solveur de flot de coût minimum on peut résoudre cette optimisation linéaire en temps $\mathcal{O}(n^3 \log (n))$. Mais la solution est instable. Comme illustré sur la figure ci-dessous. Si on change un peu notre distance $D$ ou si on modifie un peu nos mesures source et destination $\mu$ et $\nu$ la valeur de $P$ peut subir un changement brutal puisque $P$ est un sommet de notre simplex. Une solution consiste à faire une régularisation de notre problème pour se retrouver avec un ensemble $U_\alpha(a, b)$ strictement convexe. Cet ensemble est strictement inclus dans $U(a, b)$ et la solution optimale de ce nouveau problème ne sera plus optimal pour le problème initial mais sera tout de même correcte. Finalement la régularisation que l'on va voire permet aussi d'obtenir un algorithme de résolution itératif de moindre complexité.
+
+\begin{center}
+	\begin{tikzpicture}[scale=20, >={latex}]
+		\clip (0.2, -0.01) rectangle (0.51, 0.2);
+		\draw[blue, thick] (0.1420, 0.1407) -- (0.5970, -0.1407);
+		\draw[black, ->, thick] (0.2038, 0.1216) -- (0.2507, 0.1975);
+		\fill[brown!40] (0.4503, 0.1444) -- (0.2251, 0.1444) -- (0.3695, 0.0000) -- (0.4503, -0.0000);
+		\fill[greenTikz!60] (0.3827, 0.0946) -- (0.3827, 0.1104) -- (0.3804, 0.1148) -- (0.3759, 0.1206) -- (0.3692, 0.1263) -- (0.3602, 0.1307) -- (0.3556, 0.1321) -- (0.3489, 0.1336) -- (0.3264, 0.1336) -- (0.3219, 0.1321) -- (0.3151, 0.1278) -- (0.3129, 0.1234) -- (0.3129, 0.1191) -- (0.3151, 0.1133) -- (0.3241, 0.1018) -- (0.3444, 0.0888) -- (0.3534, 0.0859) -- (0.3714, 0.0859) -- (0.3804, 0.0917);
+		\node[blue] at (0.3444, 0.0888) {$\bullet$};
+		\node[blue, below=2] at (0.3444, 0.0888) {$P_\alpha$};
+		\node[greenTikz] at (0.3489, 0.1119) {$\bullet$};
+		\node[red] at (0.3695, 0.0000) {$\bullet$};
+		\node[red, above=2] at (0.3695, 0) {$P$};
+		\node at (0.482, 0.08) {$U(a, b)$};
+		\node at (0.413, 0.12) {$U_\alpha(a, b)$};
+		\node at (0.213, 0.165) {$D$};
+	\end{tikzpicture}
+\end{center}
+
+\subs{Régularisation}
+
+La régularisation que l'on effectue consiste à maximiser l'entropie de probabilité conjointe $P$. On fait apparaître un nouveau paramètre $\gamma$ qui contrôle cette régularisation et on obtient la distance suivante :
+
+\DEF{
+	La \textbf{distance de Wasserstein régularisée} est définie de la manière suivante :
+	$$ W_\gamma(\mu, \nu) = \min_{P \in U(a, b)} \langle P, D \rangle - \gamma H(P) $$
+	\vspace{-5mm}
+} 
+
+\paragraph{Remarque}
+On rappelle que l'on peut considérer deux variables aléatoires $X$ et $Y$ tel que $X \sim \mu$, $Y \sim \nu$ et $X, Y \sim P$. L'entropie de $P$ est maximale lorsque $X$ et $Y$ sont indépendants, c'est à dire lorsque $P = ab^\trans$ et l'entropie maximal est alors $H(\mu) + H(\nu)$. La régularisation donne donc une matrice avec des valeurs strictement positive plus réparties.
+
+\begin{center}
+	\includegraphics[scale=0.25]{reg_wass.png}
+\end{center}
+
+Par stricte convexité, il existe une unique matrice $P_\gamma$ qui minimise la distance :
+$$ P_\gamma = \argmin_{P \in U(a, b)} \langle P, D \rangle - \gamma H(P) $$
+
+\PROP{
+	Il existe un unique couple de vecteurs $u$ et $v$ appartenant à $\R_+^n$ et $\R_+^m$ tel que :
+	$$ P_\gamma = \text{diag}(u) K \text{diag}(v), \qquad K = e^{-D / \gamma} $$
+	\vspace{-6mm}
+}
+
+\dem
+On écrit le nouveau laplacien :
+$$ L(P, \alpha, \beta) = \sum_{ij} \left( P_{ij} D_{ij} + \gamma P_{ij} \left( \log_2 P_{ij} - 1 \right) \right) + \alpha^\trans (a - P \mathbbm{1}_m) + \beta^\trans (b - P^\trans \mathbbm{1}_n) $$
+On calcule alors la dérivée partielle par rapport à $P_{ij}$ :
+$$ \dfrac{\partial L}{\partial P_{ij}} = M_{ij} + \gamma \log_2 P_{ij} - \alpha_i - \beta_j $$
+Le dual est la maximisation du minimum du laplacien par rapport à $P$. Donc on doit avoir $P$ tel que la dérivée partielle est nulle :
+$$ \dfrac{\partial L}{\partial P_{ij}} = 0 \Rightarrow P_{ij} = e^{\frac{\alpha_i}{\gamma}} e^{-\frac{D_{ij}}{\gamma}}  e^{\frac{\beta_j}{\gamma}} = u_i K_{ij} v_j $$
+\findem
+
+\paragraph{Sinkhorn}
+On dispose alors d'une méthode itérative pour trouver cette matrice $P_\gamma$. On traduit la condition $P_\gamma \in U(a, b)$ :
+$$ P_\gamma \in U(a, b) \Leftrightarrow \left\{ \begin{array}{lrr}
+\text{diag}(u) K \text{diag}(v) \mathbbm{1}_m & = & a \\
+\text{diag}(v) K^\trans \text{diag}(u) \mathbbm{1}_n & = & b
+\end{array} \right. $$
+$$ P_\gamma \in U(a, b) \Leftrightarrow \left\{ \begin{array}{lrr}
+\text{diag}(u) K v & = & a \\
+\text{diag}(v) K^\trans u & = & b
+\end{array} \right. $$
+On introduit alors $\odot$ le produit coefficient par coefficient :
+$$ P_\gamma \in U(a, b) \Leftrightarrow \left\{ \begin{array}{lrr}
+u \odot K v & = & a \\
+v \odot K^\trans u & = & b
+\end{array} \right. $$
+$$ P_\gamma \in U(a, b) \Leftrightarrow \left\{ \begin{array}{lrc}
+u & = & a \, / \, K v \\
+v & = & b \, / \, K^\trans u
+\end{array} \right. $$
+L'algorithme de Sinkhorn est alors le suivant :\\
+\begin{algorithm}[H]
+	\Repeat{convergence de $u, v$}{
+		$u \gets a \, / \, K v$ \;
+		$v \gets b \, / \, K^\trans u$ \;
+	}
+\end{algorithm}
+
+\paragraph{Complexité}
+Il a été prouvé que l'algorithme converge en temps linéaire. De plus une étape de calcul se fait en $\mathcal{O}(nm)$ mais les calculs peuvent être parallélisés. Il est aussi possible d'utiliser des convolutions sur une grille pour obtenir une complexité en $\mathcal{O}(n \log n)$.
+
+\paragraph{Dual}
+On peut aussi relever la formulation du dual avec régularisation :
+$$ W_\gamma(\mu, \nu) = \max_{\alpha, \beta} \alpha^\trans a + \beta^\trans b - \gamma \left( e^{\alpha / \gamma} \right)^\trans K \left( e^{\beta / \gamma} \right) $$
