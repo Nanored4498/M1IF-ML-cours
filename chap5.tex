@@ -266,6 +266,7 @@ v & = & b \, / \, K^\trans u
 \end{array} \right. $$
 L'algorithme de Sinkhorn est alors le suivant :\\
 \begin{algorithm}[H]
+	\caption{Sinkhorn}
 	\Repeat{convergence de $u, v$}{
 		$u \gets a \, / \, K v$ \;
 		$v \gets b \, / \, K^\trans u$ \;
