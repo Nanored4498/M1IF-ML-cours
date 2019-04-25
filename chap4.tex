@@ -4,7 +4,7 @@
 
 \sect{Introduction - Maximisation de la variance}
 
-L'\textbf{analyse de composante principale (PCA)} est une réduction de la dimension. Elle projette en semble de points vivant dans un espace de dimension {\boldmath $d$} sur un sous-espace de dimension {\boldmath $M$}~$< d$. Si $M = 2$ alors on peut visualiser les données. L'analyse génère de nouvelles features qui sont décorrélés et qui un sens qui permet de bien discriminer les données.
+L'\textbf{analyse de composante principale (PCA)} est une réduction de la dimension. Elle projette un ensemble de points vivant dans un espace de dimension {\boldmath $d$} sur un sous-espace de dimension {\boldmath $M$}~$< d$. Si $M = 2$ alors on peut visualiser les données. L'analyse génère de nouvelles features qui sont décorrélés et qui un sens qui permet de bien discriminer les données.
 
 \begin{center}
 	\begin{tikzpicture}[thick]
@@ -143,7 +143,7 @@ $$ K(x, y) = \exp \left( - \dfrac{\| x - y \|_2^2}{2 \sigma^2} \right) $$
 En utilisant KPCA (PCA avec ce noyau) on projette nos points sur un nouvel espace de dimension 2 situé à droite. La transformation entre l'espace de gauche et l'espace de droite n'est clairement pas linéaire. La première composante de notre nouvel espace nous permet de bien distinguer les 3 cercles.
 
 \paragraph{t-SNE}
-L'algorithme t-SNE pour t-distributed stochastic neighbor embedding construit une distributions de probabilité $P$ sur toute les paires d'exemples de notre ensemble de données que la probabilité d'une paire de points est grande lorsque ces points sont proches et la probabilité d'une paire de points est faible lorsque les points sont éloignés. Cette distribution est typiquement obtenue avec un noyau. \\
+L'algorithme t-SNE pour t-distributed stochastic neighbor embedding construit une distributions de probabilité $P$ sur toute les paires d'exemples de notre ensemble de données tel que la probabilité d'une paire de points est grande lorsque ces points sont proches et la probabilité d'une paire de points est faible lorsque les points sont éloignés. Cette distribution est typiquement obtenue avec un noyau. \\
 Puis l'algorithme construit une transformation qui à chaque point de notre ensemble de départ associe un nouveau point dans un nouvel espace de plus faible dimension $M \ll d$. On obtient de la même manière des distributions de probabilité $Q_i$ sur ce nouvel espace. Le but de t-SNE est alors de minimiser la divergence KL entre $P$ et $Q$ (en utilisant une descente de gradient). \\
 Pour la distribution un exemple classique est le suivant :
 $$ p_{ij} = \dfrac{p_{i|j} + p_{j|i}}{2 m} \qquad \text{avec} \quad p_{j|i} = \dfrac{\exp \left( - \| x_i - x_j \|^2 / 2 \sigma_i^2 \right)}{\sum_{k \neq i} \exp \left( - \| x_i - x_k \|^2 / 2 \sigma_i^2 \right)} $$

@@ -17,7 +17,7 @@ Où $S_c$ est le nombre d'exemples appartenant à la classe $y_c$ dans l'ensembl
 \paragraph{\boldmath $\Pp(x | y_c)$}
 On peut distinguer deux types d'approche.
 \begin{itemize}
-	\item Les \textbf{méthodes paramétriques} qui assument que $\Pp(x \ y_c)$ suit une certaine loi. Dans ce cas le problème consiste à estimer les paramètres de cette loi. C'est donc une maximisation de la vraisemblance.
+	\item Les \textbf{méthodes paramétriques} qui assument que $\Pp(x | \ y_c)$ suit une certaine loi. Dans ce cas le problème consiste à estimer les paramètres de cette loi. C'est donc une maximisation de la vraisemblance.
 	\item Les \textbf{méthodes non paramétriques} qui n'imposent aucune contraintes sur la distribution et pour laquelle les valeurs de $\Pp(x | y_c)$ sont estimés de manière local autour de chaque $x$. La seule supposition sera alors que la distribution est localement régulière.
 \end{itemize}
 
@@ -32,7 +32,7 @@ On en déduit alors, pour $V$ un voisinage de $x$, l'égalité suivante :
 $$ \hat{p}(x) = \dfrac{k_V}{m V} $$
 
 \PROP{
-	Soit $x \in \X$, et $V_m$ un voisinage de $x$ dans un ensemble de $m$ exemples d'entraînement et $k_m$ la proportion d'exemples de l'ensemble qui sont dans le voisinage $V_m$. \\
+	Soit $x \in \X$, et $V_m$ un voisinage de $x$ dans un ensemble de $m$ exemples d'entraînement et $k_m$ le nombre d'exemples de l'ensemble qui sont dans le voisinage $V_m$. \\
 	Alors $\hat{p}(x) = \dfrac{k_m}{m V_m}$ converge vers $p(x)$ lorsque $m$ tend vers l'infini si les trois conditions suivantes sont remplies :
 	$$ \bullet \lim\limits_{m \rightarrow +\infty} V_m = 0 \qquad \qquad \bullet \lim\limits_{m \rightarrow +\infty} k_m = +\infty \qquad \qquad \bullet \lim\limits_{m \rightarrow +\infty} \dfrac{k_m}{m} = 0$$
 	\vspace{-5mm}

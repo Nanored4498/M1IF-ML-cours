@@ -79,7 +79,7 @@ Quand le nombre de features augmente, le nombre $m$ d'exemples d'entraînement n
 \subs{Risque et fonction de perte}
 
 \DEF{
-	En théorie, on aime considéré la meilleurs hypothèse $h^* \in \Hyp$. En se donnant une \textbf{fonction de perte} $l : \Hyp \times \Z \rightarrow \R$ mesurant le degré d'accord entre $h(x)$ et $y$, le \textbf{vrai risque} ou \textbf{erreur de généralisation} $\trisk(h)$ est défini ainsi :
+	En théorie, on aime considérer la meilleure hypothèse $h^* \in \Hyp$. En se donnant une \textbf{fonction de perte} $l : \Hyp \times \Z \rightarrow \R$ mesurant le degré d'accord entre $h(x)$ et $y$, le \textbf{vrai risque} ou \textbf{erreur de généralisation} $\trisk(h)$ est défini ainsi :
 	$$ \trisk(h) = \E_{z \sim \dist} l(h, z) = \int_z f_\dist(z) l(h, z)$$
 	$$ h^* = \argmin_{h \in \Hyp} \trisk(h) $$
 	\vspace{-5mm}
@@ -178,7 +178,7 @@ On pénalise alors les hypothèses avec une forte norme.
 	\end{tikzpicture}
 \end{center}
 
-La norme $l_2$ est utilisée pour réduire les risques d'overfitting en réduisant les plus grandes valeurs du modèle. La norme $l_1$, elle permet d'obtenir des modèles creux, c'est à dire avec peu de features.
+La norme $l_2$ est utilisée pour réduire les risques d'overfitting en réduisant les plus grandes valeurs du modèle. La norme $l_1$, elle, permet d'obtenir des modèles creux, c'est à dire avec peu de features.
 
 \exe
 Considérons le problème suivant : \vspace{-1mm}
@@ -218,7 +218,7 @@ $$ \min_{\theta \in \R^d} \frac{1}{2} \theta^\trans \theta - \theta^\trans x + \
 Si $\lambda = 0$, on a vu que $\theta^* = x$. \\
 En revanche si $\lambda > 0$, on considère la dérivée partielle à $\theta_j = 0^+$, et à $\theta_j = 0^-$ :
 $$ g_+^j = \lambda - x_j \qquad g_-^j = - \lambda - x_j $$
-Or $\theta_j^* = 0$ si et seulement si $g_+^j \geqslant 0$ et $g_-^j \leqslant 0$. C'est à dire si $x_j \geqslant \lambda$ et $x_j \leqslant -\lambda$. \\
+Or $\theta_j^* = 0$ si et seulement si $g_+^j \geqslant 0$ et $g_-^j \leqslant 0$. C'est à dire si $x_j \leqslant \lambda$ et $x_j \geqslant -\lambda$. \\
 Donc si $|x_j| \leqslant \lambda$ alors $\theta_j^* = 0$.
 \begin{center}
 	\begin{tikzpicture}[>={latex}, thick, scale=0.8]
@@ -392,12 +392,12 @@ Malheureusement, augmenter la dimension augmente aussi la variance. Il faut donc
 Notre objectif est d'obtenir des bornes \textbf{PAC (Probably Approximately Correct)} de la forme suivante : Avec probabilité $1 - \delta$
 $$ \begin{array}{lll}
 	\trisk(h) & \leqslant & \erisk(h) + \gamma \\
-	 & \leqslant & \erisk(h^*) + 2 \gamma \qquad \text{(car } h = \argmin_{h_i \in \Hyp} \erisk(h_i)) \\
+	 & \leqslant & \erisk(h^*) + \gamma \qquad \text{(car } h = \argmin_{h_i \in \Hyp} \erisk(h_i)) \\
 	 & \leqslant & (\trisk(h^*) + \gamma) + \gamma \\
 	 & \leqslant & \trisk(h^*) + 2 \gamma
 \end{array} $$
 
-La théorie de la convergence uniforme nous donne des garanties pour les hypothèses $h \in \Hyp$. La question que l'on se pose est : Sous quelle conditions (sur le nombre minimum d'exemples d'entraînement requis) peut-on obtenir des bornes PAC valides ? \\
+La théorie de la convergence uniforme nous donne des garanties pour les hypothèses $h \in \Hyp$. La question que l'on se pose est : Sous quelles conditions (sur le nombre minimum d'exemples d'entraînement requis) peut-on obtenir des bornes PAC valides ? \\
 On va considérer deux situations. La première est celle où $|\Hyp| = k$ est fini. La seconde est celle où $\Hyp$ est infini.
 
 \subsubs{Convergence uniforme - Cas fini}
@@ -410,7 +410,7 @@ On commence par rappeler le lemme suivant: \vspace{3mm}
 }
 \vspace{2mm}
 
-On considère alors l'espace $\Hyp = \{ h_1, \dots, h_k \}$. L'inégalité de Hoeffding peut être appliqué à $\trisk(h)$ et $\erisk(h)$ avec $l(h, z_i)$ qui est une loi de Bernoulli d'espérance $\trisk(h)$. On pose donc $A_j$ l'événement $| \trisk(h) - \erisk(h) | \geqslant \gamma$. Avec l'inégalité de Hoeffding, on a : $\Pp(A_j) \leqslant 2 e^{-2 \gamma^2 m}$. Et cela donne :
+On considère alors l'espace $\Hyp = \{ h_1, \dots, h_k \}$. L'inégalité de Hoeffding peut être appliqué à $\trisk(h)$ et $\erisk(h)$ avec $l(h, z_i)$ qui est une loi de Bernoulli d'espérance $\trisk(h)$. On pose donc $A_j$ l'événement $| \trisk(h_j) - \erisk(h_j) | \geqslant \gamma$. Avec l'inégalité de Hoeffding, on a : $\Pp(A_j) \leqslant 2 e^{-2 \gamma^2 m}$. Et cela donne :
 $$ \begin{array}{lll}
 	\Pp(\sup_{h \in \Hyp} | \trisk(h) - \erisk(h) | \geqslant \gamma )
 	 & = & \Pp(A_1 \cup \dots \cup A_k) \\
@@ -579,11 +579,11 @@ $$ \begin{array}{lll}
 	 & \leqslant & \dfrac{\beta}{m} + \frac{M}{m}
 \end{array}$$
 Toujours avec l'inégalité triangulaire, on obtient ensuite :
-$$ | \erisk(h_S) - \erisk(h_{S^{i}}) | \leqslant 2 \dfrac{\beta}{M} + 2 \dfrac{M}{m} $$
+$$ | \erisk(h_S) - \erisk(h_{S^{i}}) | \leqslant 2 \dfrac{\beta}{m} + 2 \dfrac{M}{m} $$
 Cependant on peut faire un peu mieux :
 $$ \begin{array}{lll}
 	| \erisk(h_S) - \erisk(h_{S^{i}}) |
-	& \leqslant & \displaystyle \dfrac{1}{m} \sum_{j \neq i} \left| l(h_S, z_j) - l(h_{S^{ i}}, z_j) \right| + \dfrac{1}{m} | l(h_S, z_i) - l(h_S, z_i^\prime) | \\
+	& \leqslant & \displaystyle \dfrac{1}{m} \sum_{j \neq i} \left| l(h_S, z_j) - l(h_{S^{ i}}, z_j) \right| + \dfrac{1}{m} | l(h_S, z_i) - l(h_{S^i}, z_i^\prime) | \\
 	& \leqslant & 2 \dfrac{\beta}{m} + \frac{M}{m}
 \end{array}$$
 On considère alors la fonction $F = \trisk - \erisk$ pour utiliser le théorème de McDiarmid :
@@ -594,7 +594,7 @@ $$ \begin{array}{lll}
 	& \leqslant & 4 \dfrac{\beta}{m} + \dfrac{M}{m} = c_i
 \end{array} $$
 D'après le théorème de McDiarmid on a donc :
-$$ \Pp(F(S) - \E_S[F(S)] \geqslant \gamma) \leqslant \exp \left( \dfrac{- 2 \gamma^2}{\sum_{i = 1}^m c_i^2} \right) $$
+$$ \Pp \left(F(S) - \E_S[F(S)] \geqslant \gamma \right) \leqslant \exp \left( \dfrac{- 2 \gamma^2}{\sum_{i = 1}^m c_i^2} \right) $$
 Il nous faut désormais calculer l'espérance de $F(S)$.
 $$ \begin{array}{lll}
 	\E_S[\trisk(h_S) - \erisk(h_S)]
@@ -738,7 +738,7 @@ $$ \dots $$
 $$ h_{\theta^{(10)}}(x) = \theta^{(10)}_0 + \theta^{(10)}_1 x + \dots + \theta^{(10)}_{10} x^{10} $$
 On souhaite savoir quel degré $d^* \in \{ 1, ..., 10 \}$ on doit choisir. Ici $\theta$ est l'ensemble de paramètres à apprendre et $d^*$ peut être vu comme un paramètre extra à régler. \\
 
-On peut alors séparer notre ensemble d'entraînement en deux sous-ensembles $S = Train \cup Test$. Le degré optimal ensuite être obtenu en apprenant les paramètres $\theta^{1}, \dots, \theta^{(10)}$ grâce au sous-ensemble $Train$ puis en sélectionnant le modèle avec la plus petite erreur sur le sous-ensemble $Test$.
+On peut alors séparer notre ensemble d'entraînement en deux sous-ensembles $S = Train \cup Test$. Le degré optimal peut ensuite être obtenu en apprenant les paramètres $\theta^{1}, \dots, \theta^{(10)}$ grâce au sous-ensemble $Train$ puis en sélectionnant le modèle avec la plus petite erreur sur le sous-ensemble $Test$.
 
 \paragraph{Cependant !} On ne peut pas réutiliser l'ensemble $Test$ pour estimer le vrai risque. En effet cela ne serait pas équitable car on a choisi le paramètre $d^*$ de sorte à minimiser l'erreur sur $Test$. L'erreur de généralisation obtenue sur cette ensemble est donc bien trop optimiste.	On doit donc finalement séparé notre ensemble d'entraînement en trois sous-ensembles :
 \begin{itemize}

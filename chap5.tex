@@ -279,3 +279,9 @@ Il a été prouvé que l'algorithme converge en temps linéaire. De plus une ét
 \paragraph{Dual}
 On peut aussi relever la formulation du dual avec régularisation :
 $$ W_\gamma(\mu, \nu) = \max_{\alpha, \beta} \alpha^\trans a + \beta^\trans b - \gamma \left( e^{\alpha / \gamma} \right)^\trans K \left( e^{\beta / \gamma} \right) $$
+
+\paragraph{Lien avec la divergence KL}
+En posant le noyau :
+$$ K_\gamma(i, j) = \exp \left( - \dfrac{d_{i, j}}{\gamma} \right) $$
+On obtient une reformulation de la régularisation entropique avec la divergence KL :
+$$ W_\gamma(\mu, \nu) = \min_{P \in U(a, b)} \gamma KL(P | K_\gamma) $$

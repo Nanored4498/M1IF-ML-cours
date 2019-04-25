@@ -121,7 +121,7 @@ Il est important de bien choisir $\alpha$, car si sa valeur est trop élevé il 
 
 \subsubs{Descente de gradient stochastique}
 
-Si la base de donnée est grande, disons 1 million d'exemples alors à chaque itération de le descente de gradient par batchs, on doit réaliser une somme d'erreur sur un million d'exemples. Pour plus de rapidité il nous faut donc penser à un autre algorithme où l'on fait des mises à jour de $\theta$ plus régulièrement :
+Si la base de donnée est grande, disons 1 million d'exemples alors à chaque itération de le descente de gradient par batchs, on doit réaliser une somme d'erreurs sur un million d'exemples. Pour plus de rapidité il nous faut donc penser à un autre algorithme où l'on fait des mises à jour de $\theta$ plus régulièrement :
 
 \begin{center}
 	\begin{algorithm}[H]
@@ -200,7 +200,7 @@ Une bonne manière d'étudier la vraisemblance est de la passer au logarithme ca
 $$ \begin{array}{lll}
 	l(\theta)
 	& = & \displaystyle \sum_{i = 1}^m \ln \left( \dfrac{1}{\sqrt{2 \pi} \sigma} \exp \left( - \dfrac{(y^{(i)} - \theta^\trans x^{(i)})^2}{2 \sigma^2} \right) \right) \\
-	& = & \displaystyle \sum_{i = 1}^m \ln \dfrac{1}{\sqrt{2 \pi} \sigma} + \sum_{i = 1}^m \left( \exp \left( - \dfrac{(y^{(i)} - \theta^\trans x^{(i)})^2}{2 \sigma^2} \right) \right) \\
+	& = & \displaystyle \sum_{i = 1}^m \ln \dfrac{1}{\sqrt{2 \pi} \sigma} + \sum_{i = 1}^m \left( - \dfrac{(y^{(i)} - \theta^\trans x^{(i)})^2}{2 \sigma^2} \right) \\
 	& = & \displaystyle m \ln \dfrac{1}{\sqrt{2 \pi} \sigma} - \sum_{i = 1}^m \dfrac{(y^{(i)} - \theta^\trans x^{(i)})^2}{2 \sigma^2}
 \end{array} $$
 Ainsi maximiser $l(\theta)$ revient à minimiser $\displaystyle J(\theta) = \sum_{i = 1}^m \dfrac{(y^{(i)} - \theta^\trans x^{(i)})^2}{2}$ \\
@@ -260,7 +260,7 @@ En revanche pour la régularisation LASSO, on ne dispose pas de résultats préc
 \sect{Machine à vecteur de support (SVR)}
 
 Jusque là nous utilisé la méthode des moindres carrés. Il y a aussi la \textbf{perte $\bm{\epsilon}$-sensible} :
-$$ \min_{\theta, \xi, \xi^*} \frac{1}{2} \| \theta \|_2^2 + C \sum_{i = 1}^m \left( \xi_ + \xi_i^* \right) $$
+$$ \min_{\theta, \xi, \xi^*} \frac{1}{2} \| \theta \|_2^2 + C \sum_{i = 1}^m \left( \xi_i + \xi_i^* \right) $$
 \vspace{-2mm}
 $$ \text{s.t. } \left\{ \begin{array}{l}
 	y^{(i)} - \theta^\trans x^{(i)} \leqslant \epsilon + \xi_i \\
@@ -268,7 +268,7 @@ $$ \text{s.t. } \left\{ \begin{array}{l}
 	\xi_i, \xi_i^* \geqslant 0
 \end{array} \right. $$
 
-Le laplacien de ce problème est alors le suivant :
+Le lagrangien de ce problème est alors le suivant :
 $$ L(\theta, \xi, \xi^*, \alpha, \alpha^*, \beta, \beta^*) = \dfrac{1}{2} \| \theta \|^2 + C \mathbbm{1}_m^\trans \left( \xi + \xi^* \right) + \alpha^\trans \left( y - X \theta - \epsilon \mathbbm{1}_m - \xi \right) + {\alpha^*}^\trans \left( X \theta - y - \epsilon \mathbbm{1}_m - \xi \right) - \beta^\trans \xi - {\beta^*}^\trans \xi^*$$
 On rappelle que la fonction objective du dual est :
 $$ g(\alpha, \alpha^*, \beta, \beta^*) = \inf_{\theta, \xi, \xi^*} L(\theta, \xi, \xi^*, \alpha, \alpha^*, \beta, \beta^*) $$
