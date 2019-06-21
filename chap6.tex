@@ -120,7 +120,7 @@ On rappelle la descente par mini-batchs : \\
 	\For{$i = 1, ..., n$}{
 		$x_i, t_i \gets $ un exemple $i$ \;
 		$d \gets d + \nabla_w loss(w, x_i, t_i)$ \;
-		\If{$n \mod m = 0$}{
+		\If{$i \mod m = 0$}{
 			$w \gets w - \alpha d$ \;
 			$d \gets 0$ \;
 		}
